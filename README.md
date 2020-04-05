@@ -1,7 +1,5 @@
 # Darf Generator
 
-![status](images/working.png) ![release](images/release.png)
-
 A python3 software that links with the stock exchange brokers from brazil and automatic generate the taxes of the stock sales (darf) linking with the government taxes system (receita federal).
 
 To use this library, it is necessary to install the following packages:
