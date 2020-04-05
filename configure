@@ -1,0 +1,6 @@
+#!/bin/bash
+
+pyuic5 ui/gui.ui -o include/gui.py
+PYTHONPATH=$(pwd)/include
+
+#https://likegeeks.com/pyqt5-tutorial/
