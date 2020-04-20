@@ -9,14 +9,14 @@ class StockTypes(enum.Enum):
     FI = 2
     DAY_TRADE = 3
     
-class Stock:
+class SoldStock:
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, debug=False):
         self.__name = "Acao sem nome"
         self.__buy_date = None
-        self.__buy_price = 0.0
+        self.__average_price = 0.0
         self.__ammount_sold = 0
         self.__sell_price = 0.0
         self.__sell_date = None
@@ -38,19 +38,19 @@ class Stock:
         logging.debug('Setting the stock name: %s!', new_name)
         self.__name = new_name
 
-# Get class member "buy_price"
+# Get class member "average_price"
 #----------------------------------------------------------------------------------------------------------------------
     @property
-    def buy_price(self):
-        logging.debug('Returning the stock buy_price: %f!', self.__buy_price)
-        return self.__buy_price
+    def average_price(self):
+        logging.debug('Returning the stock average_price: %f!', self.__average_price)
+        return self.__average_price
 
-# Set class member "buy_price"
+# Set class member "average_price"
 #----------------------------------------------------------------------------------------------------------------------
-    @buy_price.setter
-    def buy_price(self, new_buy_price):
-        logging.debug('Setting the stock buy_price: %f!', new_buy_price)
-        self.__buy_price = new_buy_price
+    @average_price.setter
+    def average_price(self, new_average_price):
+        logging.debug('Setting the stock average_price: %f!', new_average_price)
+        self.__average_price = new_average_price
 
 # Get class member "ammount_sold"
 #----------------------------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ class Stock:
 #----------------------------------------------------------------------------------------------------------------------
     @property
     def type(self):
-        logging.debug('Setting the stock type: %d!', self.__type)
+        logging.debug('Setting the stock type: %d!', self.__type.value)
         return self.__type
 
 # Set class member "type"
@@ -121,7 +121,7 @@ class Stock:
         self.__type = new_type
         if self.__type == StockTypes.NORMAL:
             if self.is_day_trade():
-                logging.debbug('Day trade detected!')
+                logging.debug('Day trade detected!')
                 self.__type = StockTypes.DAY_TRADE
 
 # Get class member "paid_fares"
@@ -151,7 +151,7 @@ class Stock:
     @property
     def total_bought(self):
         logging.debug('Return the total bought value...')
-        total = self.__ammount_sold * self.__buy_price
+        total = self.__ammount_sold * self.__average_price
         return total
 
 # Verify if it is day trade
@@ -175,7 +175,7 @@ class Stock:
             else:
                 value = profit * 0.20 - self.__paid_fares
         else:
-            value = profit
+            value = profit - self.__paid_fares
         return value
 
 #----------------------------------------------------------------------------------------------------------------------
