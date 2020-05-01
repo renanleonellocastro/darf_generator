@@ -167,7 +167,7 @@ class SoldStock:
 # Calculate due taxes or loss and return the value
 #----------------------------------------------------------------------------------------------------------------------
     def calculate_due_taxes_or_loss(self):
-        logging.debug('Calculating due taxes or loss and return the value..')
+        logging.debug('Calculating due taxes or loss and return the value...')
         profit = self.total_sold - self.total_bought
         if profit > 0:
             if self.__type == StockTypes.NORMAL:
