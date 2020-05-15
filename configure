@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pyuic5 ui/gui.ui -o include/gui.py
+pyside2-uic ui/gui.ui -o include/gui.py
 PYTHONPATH=$(pwd)/include
 
 #https://likegeeks.com/pyqt5-tutorial/
@@ -11,3 +11,5 @@ PYTHONPATH=$(pwd)/include
 #verificar como obter os dados do cei ao inves das corretoras
 #tentar varrer dia a dia no mes para pegar o preco medio da acao
 #https://cei.b3.com.br/CEI_Responsivo/
+
+#https://www.learnpyqt.com/blog/pyqt5-vs-pyside2/
