@@ -3,7 +3,7 @@
 Um software de código aberto que está em desenvolvimento utilizando a linguagem Python3, e tem por objetivo calcular automaticamente o imposto de renda de aplicações financeiras na bolsa de valores, e gerar o boleto do **DARF** (Documento de Arrecadação de Receitas Federais) para pagamento.
 
 <p align="center">
-  <img width="460" height="500" src="images/gui.png">
+  <img width="300" height="330" src="images/gui.png">
 </p>
 
 ## Funcionamento
