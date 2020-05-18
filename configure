@@ -16,3 +16,6 @@ PYTHONPATH=$(pwd)/include
 
 #verificar essa calculadora
 #https://www.irpfbolsa.com.br/
+
+#verificar esse sistema
+#https://github.com/faz-melhor/darf-stock-back
