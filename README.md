@@ -1,18 +1,28 @@
-# Darf Generator
+# Gerador Automático do DARF
 
-A python3 software that links with the stock exchange brokers from brazil and automatic generate the taxes of the stock sales (darf) linking with the government taxes system (receita federal).
+Um software de código aberto que está em desenvolvimento utilizando a linguagem Python3, e tem por objetivo calcular automaticamente o imposto de renda de aplicações financeiras na bolsa de valores, e gerar o boleto do **DARF** (Documento de Arrecadação de Receitas Federais) para pagamento.
 
-To use this library, it is necessary to install the following packages:
+## Funcionamento
 
-- Python 3
-- Python automatedweb - <https://github.com/renanleonellocastro/automatedweb>
-- PyQt5
+O software funcionará se comunicando com o sistema **CEI - B3** para obter os dados de compra e venda de títulos e então calculará o imposto de renda devido. O software também permitirá adição manual de compra e venda de títulos, além de permitir a consulta dos títulos obtidos do sistema **CEI - B3** e adicionados manualmente. Os valores de imposto de renda serão exibidos em uma interface gráfica para o usuário e, caso haja imposto a ser pago, será permitido ao usuário utilizar o botão *Gerar Boleto* o qual se comunicará com o sistema da Receita Federal (SicalcWeb) para gerar o boleto a ser pago sobre os lucros obtidos nas aplicações financeiros daquele mês.
 
-## Architecture Concept
 
-The system is divided in four subsystems as following:
+## Arquitetura do Sistema
 
-- Subsystem 1: Get data from the brokers (stock purchase and sales) using the automatedweb tool.
-- Subsystem 2: Develop the taxes rules (calculate the taxes).
-- Subsystem 3: Connect with the government taxes system to generate the darf using the automatedweb tool.
-- Subsystem 4: Graphical user interface to show the taxes information and to give user the interface to register his brokers accounts and manage the application. This is developed using PyQt5 library.
+O sistema será dividido em 4 subsistemas como mostrado abaixo:
+
+- **1-) Comunicação com CEI - B3** : Obtenção dos dados de compra e venda de títulos do sistema **CEI - B3**.
+- **2-) Cálculo do Imposto**       : Cálculo dos impostos utilizando as regras aplicáveis.
+- **3-) Geração de Boleto**        : Comunicação com o sistema da receita federal (SicalcWeb) para gerar o
+                                     boleto de pagamento do **DARF**.
+- **4-) GUI**                      : Interface gráfica com o usuário que exibirá os dados calculados de imposto e valores totais
+                                     vendidos por categoria de título financeiro. Fornecerá também botões de geração de boleto,
+                                     consulta dos títulos vendidos no mês, possibilidade de adição manual de compra e venda de
+                                     títulos e campos para _login_ no sistema **CEI - B3**.
+
+## Quer contribuir?
+
+Trata-se de um projeto de código aberto e qualquer contribuição é super bem vinda.
+Estamos abertos para tirar qualquer dúvida :).
+
+Os **_backlogs_** serão adicionados ao projeto no **GitHub** para quem estiver interessado em contribuir.
