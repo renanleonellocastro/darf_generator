@@ -27,6 +27,7 @@ O sistema será dividido em 4 subsistemas como mostrado abaixo:
 ## Quer contribuir?
 
 Trata-se de um projeto de código aberto e qualquer contribuição é super bem vinda.
-Estamos abertos para tirar qualquer dúvida :).
 
-Os **_backlogs_** serão adicionados ao projeto no **GitHub** para quem estiver interessado em contribuir.
+As tarefas estão visíveis na sessão **_Issues_** deste repositório e outras ainda estarão sendo adicionadas. Para quem deseja contribuir, basta escolher uma tarefa e realizar o **_FORK_** do projeto e então mão na massa!
+
+Estamos abertos para tirar qualquer dúvida :).
