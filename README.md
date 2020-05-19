@@ -1,6 +1,6 @@
 # Gerador Automático do DARF
 
-Um software de código aberto que está em desenvolvimento utilizando a linguagem Python3, e tem por objetivo calcular automaticamente o imposto de renda de aplicações financeiras na bolsa de valores, e gerar o boleto do **DARF** (Documento de Arrecadação de Receitas Federais) para pagamento.
+Um software de código aberto que está em desenvolvimento utilizando a linguagem Python3 Tem por objetivo calcular automaticamente o imposto de renda de aplicações financeiras na bolsa de valores e gerar o boleto do **DARF** (Documento de Arrecadação de Receitas Federais) para pagamento.
 
 <p align="center">
   <img width="300" height="330" src="images/gui.png">
@@ -8,7 +8,7 @@ Um software de código aberto que está em desenvolvimento utilizando a linguage
 
 ## Funcionamento
 
-O software funcionará se comunicando com o sistema **CEI - B3** para obter os dados de compra e venda de títulos e então calculará o imposto de renda devido. O software também permitirá adição manual de compra e venda de títulos, além de permitir a consulta dos títulos obtidos do sistema **CEI - B3** e adicionados manualmente. Os valores de imposto de renda serão exibidos em uma interface gráfica para o usuário e, caso haja imposto a ser pago, será permitido ao usuário utilizar o botão *Gerar Boleto* o qual se comunicará com o sistema da Receita Federal (SicalcWeb) para gerar o boleto a ser pago sobre os lucros obtidos nas aplicações financeiros daquele mês.
+O software funcionará se comunicando com o sistema **CEI - B3** para obter os dados de compra e venda de títulos e, então, calcular o imposto de renda devido. O software também permitirá adição manual de compra e venda de títulos, além de permitir a consulta dos títulos obtidos do sistema **CEI - B3** e adicionados manualmente. Os valores de imposto de renda serão exibidos em uma interface gráfica para o usuário. Caso haja imposto a ser pago, será permitido ao usuário utilizar o botão **Gerar Boleto** o qual se comunicará com o sistema da Receita Federal (SicalcWeb) para gerar o boleto a ser pago sobre os lucros obtidos nas aplicações financeiras daquele mês.
 
 
 ## Arquitetura do Sistema
