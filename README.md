@@ -6,10 +6,21 @@ Um software de código aberto que está em desenvolvimento utilizando a linguage
   <img width="300" height="330" src="images/gui.png">
 </p>
 
+## Como Executar
+
+O sistema ainda está em desenvolvimento, então ainda não atenderá todas as funcionalidades esperadas.
+Para executar a aplicação, no estado atual de desenvolvimento, insira os seguintes comandos no terminal:
+
+```shell
+source configure
+```
+```shell
+python3 ./src/main.py
+```
+
 ## Funcionamento
 
 O software funcionará se comunicando com o sistema **CEI - B3** para obter os dados de compra e venda de títulos e, então, calcular o imposto de renda devido. O software também permitirá adição manual de compra e venda de títulos, além de permitir a consulta dos títulos obtidos do sistema **CEI - B3** e adicionados manualmente. Os valores de imposto de renda serão exibidos em uma interface gráfica para o usuário. Caso haja imposto a ser pago, será permitido ao usuário utilizar o botão **Gerar Boleto** o qual se comunicará com o sistema da Receita Federal (SicalcWeb) para gerar o boleto a ser pago sobre os lucros obtidos nas aplicações financeiras daquele mês.
-
 
 ## Arquitetura do Sistema
 
