@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-from gui import Ui_Gui
+from include.gui import Ui_Gui
 from PySide2 import QtWidgets
 
 class Gui(QtWidgets.QWidget, Ui_Gui):
