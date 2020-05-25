@@ -52,14 +52,14 @@ class Stock:
 #----------------------------------------------------------------------------------------------------------------------
     @property
     def category(self):
-        logging.debug('Returning the stock category: %d!', self.__category)
+        logging.debug('Returning the stock category: %d!', self.__category.value)
         return self.__category
 
 # Set class member "category"
 #----------------------------------------------------------------------------------------------------------------------
     @category.setter
     def category(self, new_category):
-        logging.debug('Setting the stock category: %d!', new_category)
+        logging.debug('Setting the stock category: %d!', new_category.value)
         self.__category = new_category
 
 # Get class member "ammount"

@@ -2,10 +2,10 @@
 
 import copy
 import logging
-from stock import Stock
-from stock import StockTypes
-from transaction import Transaction
-from transaction import TransactionTypes
+from include.stock import Stock
+from include.stock import StockTypes
+from include.transaction import Transaction
+from include.transaction import TransactionTypes
 
 class Control:
 
@@ -13,7 +13,6 @@ class Control:
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, debug=False):
         self.__stocks = []
-        self.__evaluated_stocks = self.__stocks
         self.__transactions = []
         self.__darf_value = 0.0
         self.__total_purchase = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
@@ -21,32 +20,14 @@ class Control:
         self.__total_due_tax = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
         self.__total_profit = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
         self.__accumulated_loss = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
-        self.__accumulated_loss_evaluated = self.__accumulated_loss
         self.__accumulated_darf = 0.0
-        self.__accumulated_darf_evaluated = self.__accumulated_darf
-        self.__normal_no_tax_sale_ammount = 20000.00
+        self.__normal_no_tax_sale_value = 20000.00
         self.__normal_tax = 0.15
         self.__fi_tax = 0.20
         self.__day_trade_tax = 0.20
         self.__minimum_darf_value = 10.0
         self.__debug = debug
-
-# Get class member "month"
-#----------------------------------------------------------------------------------------------------------------------
-    @property
-    def month(self):
-        logging.debug('Returning the month: %d!', self.__month)
-        return self.__month
-
-# Set class member "month"
-#----------------------------------------------------------------------------------------------------------------------
-    @month.setter
-    def month(self, new_month):
-        logging.debug('Setting the month: %d!', new_month)
-        if new_month > 12 or new_month < 1:
-            logging.error('Month does not exist!')
-        else:
-            self.__month = new_month
+        self.set_log_level(self.__debug)
 
 # Add a new stock to the class
 #----------------------------------------------------------------------------------------------------------------------
@@ -113,7 +94,7 @@ class Control:
 
 # Add a new transaction to the class
 #----------------------------------------------------------------------------------------------------------------------
-    def add_transaction(self, name, price, category, ammount, paid_fares, day, month, year,
+    def add_transaction(self, name, price, category, ammount, paid_fares, day, month, year,\
         operation_type, operation_id):
         logging.debug('Adding new transaction: %s : id: %d', name, operation_id)
         transaction = Transaction(name,price,category,ammount,paid_fares,day,month,year,
@@ -122,7 +103,7 @@ class Control:
 
 # Edit a transaction in the class
 #----------------------------------------------------------------------------------------------------------------------
-    def edit_transaction(self, operation_id,name, price, category, ammount, paid_fares,
+    def edit_transaction(self, operation_id,name, price, category, ammount, paid_fares,\
         day, month, year, operation_type):
         logging.debug('Editing the transaction: %d', operation_id)
         transaction_index = self.find_transaction(operation_id)
@@ -169,12 +150,10 @@ class Control:
 
 # Process transactions
 #----------------------------------------------------------------------------------------------------------------------
-    def process_transactions(self):
+    def __process_transactions(self):
         logging.debug('Processing the registered transactions...')
-        self.__evaluated_stocks = self.__stocks
-        self.__accumulated_darf_evaluated = self.__accumulated_darf
         self.__darf_value = 0.0
-        transactions = sorted(self.__transactions, key=lambda x: (x.operation_date, x.operation_type))
+        transactions = sorted(self.__transactions, key=lambda x: (x.operation_date, x.operation_type.value))
         fi_transactions = []
         day_trade_transactions = []
         normal_transactions = []
@@ -183,12 +162,12 @@ class Control:
                 fi_transactions.append(copy.copy(transactions[i]))
             elif transactions[i].category == StockTypes.NORMAL:
                 j = i + 1
-                while (transactions[j].operation_date == transactions[i].operation_date and
-                    transactions[i].ammount != 0):
+                while (j < len(transactions) and transactions[j].operation_date == transactions[i].operation_date \
+                     and transactions[i].ammount != 0):
                     if (transactions[j].name == transactions[i].name):
                         if (transactions[j].operation_type == transactions[i].operation_type):
                             new_ammount = transactions[i].ammount + transactions[j].ammount
-                            new_price = (transactions[i].price * transactions[i].ammount +
+                            new_price = (transactions[i].price * transactions[i].ammount + \
                                 transactions[j].price * transactions[j].ammount) / new_ammount
                             transactions[i].ammount = new_ammount
                             transactions[i].price = new_price
@@ -198,7 +177,7 @@ class Control:
                             transactions[j].paid_fares = 0.0
                         else:
                             if (transactions[j].ammount < transactions[i].ammount):
-                                Transaction new = copy.copy(transactions[i])
+                                new = copy.copy(transactions[i])
                                 new.ammount = transactions[j].ammount
                                 new.paid_fares = (transactions[i].paid_fares / transactions[i].ammount) * new.ammount
                                 transactions[j].category = StockTypes.DAY_TRADE
@@ -209,7 +188,7 @@ class Control:
                                 transactions[i].ammount-=new.ammount
                                 transactions[j].ammount = 0
                             else:
-                                Transaction new = copy.copy(transactions[j])
+                                new = copy.copy(transactions[j])
                                 new.ammount = transactions[i].ammount
                                 new.paid_fares = (transactions[j].paid_fares / transactions[j].ammount) * new.ammount
                                 transactions[i].category = StockTypes.DAY_TRADE
@@ -222,41 +201,45 @@ class Control:
                     j+=1
                 if (transactions[i].ammount != 0 and transactions[i].category != StockTypes.DAY_TRADE):
                     normal_transactions.append(copy.copy(transactions[i]))
-        self.__process_fi_transactions(fi_transactions)
-        self.__process_day_trade_transactions(day_trade_transactions)
-        self.__process_normal_transactions(normal_transactions)
-        self.__total_due_tax = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
+        if (not self.__process_fi_transactions(fi_transactions)):
+            return False
+        if (not self.__process_day_trade_transactions(day_trade_transactions)):
+            return False
+        if (not self.__process_normal_transactions(normal_transactions)):
+            return False
         self.__darf_value = self.__total_due_tax['normal'] + self.__total_due_tax['day_trade'] + \
-            self.__total_due_tax['fi']
+            self.__total_due_tax['fi'] + self.__accumulated_darf
+        if (self.__darf_value < self.__minimum_darf_value):
+            self.__accumulated_darf = self.__darf_value
+        return True
 
 # Process fi transactions
 #----------------------------------------------------------------------------------------------------------------------
     def __process_fi_transactions(self, transactions):
         logging.debug('Processing fi transactions')
-        self.__accumulated_loss_evaluated['fi'] = self.__accumulated_loss['fi']
         self.__total_purchase['fi'] = 0.0
         self.__total_sale['fi'] = 0.0
         self.__total_profit['fi'] = 0.0
         self.__total_due_tax['fi'] = 0.0
         for transaction in transactions:
             stock_index = self.find_stock(transaction.name)
-            stock = self.__evaluated_stocks[stock_index]
             if (transaction.operation_type == TransactionTypes.PURCHASE):
                 self.__total_purchase['fi'] += transaction.price * transaction.ammount
                 if (stock_index != -1):
+                    stock = self.__stocks[stock_index]
                     stock_price = stock.price
                     stock_ammount = stock.ammount
-                    stock_fares = stock.paid_fares
                     new_ammount = stock_ammount + transaction.ammount
                     stock.price = (stock_price * stock_ammount + transaction.price * transaction.ammount) / new_ammount
                     stock.ammount = new_ammount
                     stock.paid_fares += transaction.paid_fares
                 else:
-                    stock = Stock(transaction.name, transaction.price, transaction.category, transaction.ammount,
+                    new_stock = Stock(transaction.name, transaction.price, transaction.category, transaction.ammount,
                         transaction.paid_fares)
-                    self.__evaluated_stocks.append(stock)
+                    self.__stocks.append(new_stock)
             else:
                 if (stock_index != -1):
+                    stock = self.__stocks[stock_index]
                     self.__total_sale['fi'] += transaction.price * transaction.ammount
                     fares = (stock.paid_fares / stock.ammount) * transaction.ammount + transaction.paid_fares
                     profit = transaction.price * transaction.ammount - stock.price * transaction.ammount - fares
@@ -265,14 +248,14 @@ class Control:
                     stock.paid_fares -= fares
                     if (stock.ammount < 0):
                         return False
-                    elif (self.__evaluated_stocks[stock_index].ammount == 0):
-                        del self.__evaluated_stocks[stock_index]
+                    elif (self.__stocks[stock_index].ammount == 0):
+                        del self.__stocks[stock_index]
                 else:
                     return False
-        if (self.__total_profit['fi'] - self.__accumulated_loss_evaluated['fi']) > 0:
+        if (self.__total_profit['fi'] - self.__accumulated_loss['fi']) > 0:
             self.__total_due_tax['fi'] = self.__fi_tax * self.__total_profit['fi']
         else:
-            self.__accumulated_loss_evaluated['fi'] = self.__accumulated_loss_evaluated['fi'] \
+            self.__accumulated_loss['fi'] = self.__accumulated_loss['fi'] \
                 - self.__total_profit['fi']
         return True
 
@@ -280,7 +263,6 @@ class Control:
 #----------------------------------------------------------------------------------------------------------------------
     def __process_day_trade_transactions(self, transactions):
         logging.debug('Processing day trade transactions')
-        self.__accumulated_loss_evaluated['day_trade'] = self.__accumulated_loss['day_trade']
         self.__total_purchase['day_trade'] = 0.0
         self.__total_sale['day_trade'] = 0.0
         self.__total_profit['day_trade'] = 0.0
@@ -303,20 +285,150 @@ class Control:
                 transaction.ammount = 0
                 transactions[i+1].ammount = 0
 
-        if (self.__total_profit['day_trade'] - self.__accumulated_loss_evaluated['day_trade']) > 0:
+        if (self.__total_profit['day_trade'] - self.__accumulated_loss['day_trade']) > 0:
             self.__total_due_tax['day_trade'] = self.__day_trade_tax * self.__total_profit['day_trade']
         else:
-            self.__accumulated_loss_evaluated['day_trade'] = self.__accumulated_loss_evaluated['day_trade'] \
+            self.__accumulated_loss['day_trade'] = self.__accumulated_loss['day_trade'] \
                 - self.__total_profit['day_trade']
         return True
 
-# Evaluate transactions
+# Process normal transactions
 #----------------------------------------------------------------------------------------------------------------------
-    def evaluate_transactions(self):
-        logging.debug('Evaluating the registered transactions...')
-        self.__stocks = self.__evaluated_stocks
-        self.__accumulated_loss = self.__accumulated_loss_evaluated
-        self.__accumulated_darf = self.__accumulated_darf_evaluated
+    def __process_normal_transactions(self, transactions):
+        logging.debug('Processing normal transactions')
+        self.__total_purchase['normal'] = 0.0
+        self.__total_sale['normal'] = 0.0
+        self.__total_profit['normal'] = 0.0
+        self.__total_due_tax['normal'] = 0.0
+        for transaction in transactions:
+            stock_index = self.find_stock(transaction.name)
+            if (transaction.operation_type == TransactionTypes.PURCHASE):
+                self.__total_purchase['normal'] += transaction.price * transaction.ammount
+                if (stock_index != -1):
+                    stock = self.__stocks[stock_index]
+                    stock_price = stock.price
+                    stock_ammount = stock.ammount
+                    stock_fares = stock.paid_fares
+                    new_ammount = stock_ammount + transaction.ammount
+                    stock.price = (stock_price * stock_ammount + transaction.price * transaction.ammount) / new_ammount
+                    stock.ammount = new_ammount
+                    stock.paid_fares += transaction.paid_fares
+                else:
+                    new_stock = Stock(transaction.name, transaction.price, transaction.category, transaction.ammount,
+                        transaction.paid_fares)
+                    self.__stocks.append(new_stock)
+            else:
+                if (stock_index != -1):
+                    stock = self.__stocks[stock_index]
+                    self.__total_sale['normal'] += transaction.price * transaction.ammount
+                    fares = (stock.paid_fares / stock.ammount) * transaction.ammount + transaction.paid_fares
+                    profit = transaction.price * transaction.ammount - stock.price * transaction.ammount - fares
+                    self.__total_profit['normal'] += profit
+                    stock.ammount -= transaction.ammount
+                    stock.paid_fares -= fares
+                    if (stock.ammount < 0):
+                        return False
+                    elif (self.__stocks[stock_index].ammount == 0):
+                        del self.__stocks[stock_index]
+                else:
+                    return False
+        if (self.__total_profit['normal'] - self.__accumulated_loss['normal']) > 0:
+            if (self.__total_sale['normal'] > self.__normal_no_tax_sale_value):
+                self.__total_due_tax['normal'] = self.__normal_tax * self.__total_profit['normal']
+        else:
+            self.__accumulated_loss['normal'] = self.__accumulated_loss['normal'] \
+                - self.__total_profit['normal']
+        return True
+
+# Save operations
+#----------------------------------------------------------------------------------------------------------------------
+    def save_operations(self):
+        logging.debug('Saving the registered operations...')
+        # save the operations in the database
+        # self.__stocks = copy.copy(self.__evaluated_stocks)
+        # self.__accumulated_loss = copy.copy(self.__accumulated_loss_evaluated)
+        # self.__accumulated_darf = copy.copy(self.__accumulated_darf_evaluated)
+
+# Load operations
+#----------------------------------------------------------------------------------------------------------------------
+    def load_operations(self):
+        logging.debug('Loading the saved operations...')
+        # Load the operations from the database
+        # self.__stocks = copy.copy(self.__evaluated_stocks)
+        # self.__accumulated_loss = copy.copy(self.__accumulated_loss_evaluated)
+        # self.__accumulated_darf = copy.copy(self.__accumulated_darf_evaluated)
+
+# Get total purchase of fi stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_purchase_of_fi_stocks(self):
+        logging.debug('Returning the total purchase of fi stocks...')
+        return self.__total_purchase['fi']
+
+# Get total purchase of day trade stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_purchase_of_day_trade_stocks(self):
+        logging.debug('Returning the total purchase of day trade stocks...')
+        return self.__total_purchase['day_trade']
+
+# Get total purchase of normal stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_purchase_of_normal_stocks(self):
+        logging.debug('Returning the total purchase of normal stocks...')
+        return self.__total_purchase['normal']
+
+# Get total sale of fi stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_sale_of_fi_stocks(self):
+        logging.debug('Returning the total sale of fi stocks...')
+        return self.__total_sale['fi']
+
+# Get total sale of day trade stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_sale_of_day_trade_stocks(self):
+        logging.debug('Returning the total sale of day trade stocks...')
+        return self.__total_sale['day_trade']
+
+# Get total sale of normal stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_sale_of_normal_stocks(self):
+        logging.debug('Returning the total sale of normal stocks...')
+        return self.__total_sale['normal']
+
+# Get total profit of fi stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_profit_of_fi_stocks(self):
+        logging.debug('Returning the total profit of fi stocks...')
+        return self.__total_profit['fi']
+
+# Get total profit of day trade stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_profit_of_day_trade_stocks(self):
+        logging.debug('Returning the total profit of day trade stocks...')
+        return self.__total_profit['day_trade']
+
+# Get total profit of normal stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_profit_of_normal_stocks(self):
+        logging.debug('Returning the total profit of normal stocks...')
+        return self.__total_profit['normal']
+
+# Get total due tax of fi stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_due_tax_of_fi_stocks(self):
+        logging.debug('Returning the total due tax of fi stocks...')
+        return self.__total_due_tax['fi']
+
+# Get total due tax of day trade stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_due_tax_of_day_trade_stocks(self):
+        logging.debug('Returning the total due tax of day trade stocks...')
+        return self.__total_due_tax['day_trade']
+
+# Get total due tax of normal stocks
+#----------------------------------------------------------------------------------------------------------------------
+    def get_total_due_tax_of_normal_stocks(self):
+        logging.debug('Returning the total due tax of normal stocks...')
+        return self.__total_due_tax['normal']
 
 # Get darf value
 #----------------------------------------------------------------------------------------------------------------------
@@ -325,67 +437,14 @@ class Control:
         logging.debug('Returning the darf value %f...', self.__darf_value)
         return self.__darf_value
 
-# Get total sell value of normal stocks
-#----------------------------------------------------------------------------------------------------------------------
-    def get_total_sell_value_of_normal_stocks(self):
-        logging.debug('Returning the total sell value of normal stocks...')
-        total = 0.0
-        for stock in self.__stocks:
-            total += stock.total_sold
-        return total
-
 # Calculate darf
 #----------------------------------------------------------------------------------------------------------------------
     def calculate_darf(self):
-        logging.debug('Calculating the darfs...')
-        total_normal = self.__accumulated_loss['normal']
-        total_day_trade = self.__accumulated_loss['day_trade']
-        total_fi = self.__accumulated_loss['fi']
-        normal_free_tax_sell = 20000.00
-        minimum_darf_value = 10.0
-        self.__darf_value = 0.0
-
-        for stock in self.__stocks:
-            if stock.type == StockTypes.DAY_TRADE:
-                total_day_trade += stock.calculate_due_taxes_or_loss()
-            elif stock.type == StockTypes.FI:
-                total_fi += stock.calculate_due_taxes_or_loss()
-            elif stock.type == StockTypes.NORMAL:
-                total_normal += stock.calculate_due_taxes_or_loss()
-
-        #Day trade operations with positive profit
-        if total_day_trade > 0.0:
-            self.__darf_value += total_day_trade
-            self.__accumulated_loss['day_trade'] = 0.0
-        #Day trade operations with negative profit
+        logging.debug('Calculating the darf')
+        if (self.__process_transactions()):
+            logging.debug('Darf calculated!')
         else:
-            self.__accumulated_loss['day_trade'] = total_day_trade
-
-        #Normal operations with positive profit
-        if self.get_total_sell_value_of_normal_stocks() > normal_free_tax_sell:
-            if total_normal > 0.0:
-                self.__darf_value += total_normal
-                self.__accumulated_loss['normal'] = 0.0
-        #Normal operations with negative profit
-        if total_normal < 0.0:
-                self.__accumulated_loss['normal'] = total_normal
-
-        #fi operations with positive profit
-        if total_fi > 0.0:
-            self.__darf_value += total_fi
-            self.__accumulated_loss['fi'] = 0.0
-        #fi operations with negative profit
-        else:
-            self.__accumulated_loss['fi'] = total_fi
-
-        #add accumulated darf and check if darf has to accumulate
-        self.__darf_value += self.__accumulated_darf
-        if self.__darf_value >= minimum_darf_value:
-            self.__accumulated_darf = 0.0
-        else:
-            logging.debug('Darf %d is not greater than minimum %f...', self.__darf_value, minimum_darf_value)
-            self.__accumulated_darf = self.__darf_value
-            self.__darf_value = 0.0
+            logging.error('Error calculating the darf!')
 
 # Set log level
 #----------------------------------------------------------------------------------------------------------------------

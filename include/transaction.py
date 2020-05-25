@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 import enum
-import stock
 import logging
+from include import stock
 from datetime import date
 
 class TransactionTypes(enum.Enum):
@@ -38,14 +38,14 @@ class Transaction(stock.Stock):
 #----------------------------------------------------------------------------------------------------------------------
     @property
     def operation_type(self):
-        logging.debug('Returning the transaction operation type: %d!', self.__operation_type)
+        logging.debug('Returning the transaction operation type: %d!', self.__operation_type.value)
         return self.__operation_type
 
 # Set class member "operation_type"
 #----------------------------------------------------------------------------------------------------------------------
     @operation_type.setter
     def operation_type(self, new_operation_type):
-        logging.debug('Setting the transaction operation type: %d!', new_operation_type)
+        logging.debug('Setting the transaction operation type: %d!', new_operation_type.value)
         self.__operation_type = new_operation_type
 
 # Get class member "operation_id"
