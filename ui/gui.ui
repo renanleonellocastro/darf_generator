@@ -476,7 +476,7 @@
   <property name="windowTitle">
    <string>Gerador de Darf</string>
   </property>
-  <layout class="QVBoxLayout" name="GuiLayout" stretch="5,2,10,3">
+  <layout class="QVBoxLayout" name="guiLayout" stretch="5,2,10,3">
    <item>
     <widget class="QFrame" name="CeiFrame">
      <property name="focusPolicy">
@@ -637,39 +637,123 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QPushButton" name="addStockButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="QFrame" name="addFrame">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
         </property>
-        <property name="text">
-         <string>Adicionar Ação Vendida</string>
-        </property>
+        <layout class="QVBoxLayout" name="addFrameLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="addStockButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Adicionar Ação</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addTransactionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Adicionar Transação</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="consultStockButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <widget class="QFrame" name="consultFrame">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
         </property>
-        <property name="text">
-         <string>Consultar Ações Vendidas</string>
-        </property>
+        <layout class="QVBoxLayout" name="consultFrameLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="consultStockButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Consultar Ações</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="consultTransactionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Consultar Transações</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -757,6 +841,80 @@
        </layout>
       </item>
       <item>
+       <widget class="Line" name="horizontalLine">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="totalPurchaseLayout" stretch="8,10,10,10">
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="totalPurchaseLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Comprado</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="swingTradeTotalPurchaseLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>R$ 0,00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="dayTradeTotalPurchaseLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>R$ 0,00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="realEstateFundsTotalPurchaseLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>R$ 0,00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="totalSoldLayout" stretch="8,10,10,10">
         <property name="rightMargin">
          <number>0</number>
@@ -769,8 +927,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Total
- Vendido</string>
+           <string>Vendido</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -809,6 +966,73 @@
         </item>
         <item>
          <widget class="QLabel" name="realEstateFundsTotalSoldLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>R$ 0,00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="totalProfitLayout" stretch="8,10,10,10">
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="totalProfitLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Lucro</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="swingTradeTotalProfitLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>R$ 0,00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="dayTradeTotalProfitLabel">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>R$ 0,00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="realEstateFundsTotalProfitLabel">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -905,8 +1129,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Imposto
- Devido</string>
+           <string>Imposto</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -1063,8 +1286,6 @@
   <tabstop>CeiUserInput</tabstop>
   <tabstop>CeiPasswordInput</tabstop>
   <tabstop>CeiLoginButton</tabstop>
-  <tabstop>addStockButton</tabstop>
-  <tabstop>consultStockButton</tabstop>
   <tabstop>darfGenerationButton</tabstop>
  </tabstops>
  <resources/>
