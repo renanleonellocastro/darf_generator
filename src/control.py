@@ -13,6 +13,7 @@ class Control:
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, debug=False):
         self.__stocks = []
+        self.__stocks_after_process = []
         self.__transactions = []
         self.__darf_value = 0.0
         self.__total_purchase = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
@@ -20,7 +21,9 @@ class Control:
         self.__total_due_tax = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
         self.__total_profit = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
         self.__accumulated_loss = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
+        self.__accumulated_loss_after_process = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
         self.__accumulated_darf = 0.0
+        self.__accumulated_darf_after_process = 0.0
         self.__normal_no_tax_sale_value = 20000.00
         self.__normal_tax = 0.15
         self.__fi_tax = 0.20
@@ -31,11 +34,12 @@ class Control:
 
 # Add a new stock to the class
 #----------------------------------------------------------------------------------------------------------------------
-    def add_stock(self, name, price, category, ammount, paid_fares):
+    def add_stock(self, name, price, category, ammount, paid_fares, custom_stock_list=None):
         logging.debug('Adding a new stock: %s', name)
-        if (self.find_stock(name) == -1):
+        stock_list = custom_stock_list if custom_stock_list else self.__stocks
+        if (self.find_stock(name, custom_stock_list) == -1):
             stock = Stock(name,price,category,ammount,paid_fares,self.__debug)
-            self.__stocks.append(stock)
+            stock_list.append(stock)
             return True
         else:
             logging.warning('Stock: %s already exists!', name)
@@ -43,14 +47,15 @@ class Control:
 
 # Edit a stock in the class
 #----------------------------------------------------------------------------------------------------------------------
-    def edit_stock(self, name, price, category, ammount, paid_fares):
+    def edit_stock(self, name, price, category, ammount, paid_fares, custom_stock_list=None):
         logging.debug('Editing the stock: %s', name)
-        stock_index = self.find_stock(name)
+        stock_list = custom_stock_list if custom_stock_list else self.__stocks
+        stock_index = self.find_stock(name, custom_stock_list)
         if (stock_index != -1):
-            self.__stocks[stock_index].price = price
-            self.__stocks[stock_index].category = category
-            self.__stocks[stock_index].ammount = ammount
-            self.__stocks[stock_index].paid_fares = paid_fares
+            stock_list[stock_index].price = price
+            stock_list[stock_index].category = category
+            stock_list[stock_index].ammount = ammount
+            stock_list[stock_index].paid_fares = paid_fares
             return True
         else:
             logging.warning('Stock: %s does not exist!', name)
@@ -58,11 +63,12 @@ class Control:
 
 # Remove a stock in the class
 #----------------------------------------------------------------------------------------------------------------------
-    def remove_stock(self, name):
+    def remove_stock(self, name, custom_stock_list=None):
         logging.debug('Removing the stock: %s', name)
-        stock_index = self.find_stock(name)
+        stock_list = custom_stock_list if custom_stock_list else self.__stocks
+        stock_index = self.find_stock(name, custom_stock_list)
         if (stock_index != -1):
-            del self.__stocks[stock_index]
+            del stock_list[stock_index]
             return True
         else:
             logging.warning('Stock: %s does not exist!', name)
@@ -70,20 +76,13 @@ class Control:
 
 # Find an existing stock by name (return index if exists, else return -1)
 #----------------------------------------------------------------------------------------------------------------------
-    def find_stock(self, name):
+    def find_stock(self, name, custom_stock_list=None):
         logging.debug('Finding if stock %s exists in the system', name)
-        for i in range (len(self.__stocks)):
-            if self.__stocks[i].name == name:
+        stock_list = custom_stock_list if custom_stock_list else self.__stocks
+        for i in range (len(stock_list)):
+            if stock_list[i].name == name:
                 return i
         return -1
-
-# Remove all stocks that has zero as ammount number in the class
-#----------------------------------------------------------------------------------------------------------------------
-    def remove_all_zero_ammount_stocks(self, name):
-        logging.debug('Removing the zero ammount stocks')
-        for i in range(len(self.__stocks)):
-            if self.__stocks[i].ammount == 0:
-                del self.__stocks[i]
 
 # Get stocks
 #----------------------------------------------------------------------------------------------------------------------
@@ -153,6 +152,9 @@ class Control:
     def __process_transactions(self):
         logging.debug('Processing the registered transactions...')
         self.__darf_value = 0.0
+        self.__stocks_after_process = copy.copy(self.__stocks)
+        self.__accumulated_darf_after_process = copy.copy(self.__accumulated_darf)
+        self.__accumulated_loss_after_process = copy.copy(self.__accumulated_loss)
         transactions = sorted(self.__transactions, key=lambda x: (x.operation_date, x.operation_type.value))
         fi_transactions = []
         day_trade_transactions = []
@@ -208,9 +210,11 @@ class Control:
         if (not self.__process_normal_transactions(normal_transactions)):
             return False
         self.__darf_value = self.__total_due_tax['normal'] + self.__total_due_tax['day_trade'] + \
-            self.__total_due_tax['fi'] + self.__accumulated_darf
+            self.__total_due_tax['fi'] + self.__accumulated_darf_after_process
         if (self.__darf_value < self.__minimum_darf_value):
-            self.__accumulated_darf = self.__darf_value
+            self.__accumulated_darf_after_process = self.__darf_value
+        else:
+            self.__accumulated_darf_after_process = 0.0
         return True
 
 # Process fi transactions
@@ -222,11 +226,11 @@ class Control:
         self.__total_profit['fi'] = 0.0
         self.__total_due_tax['fi'] = 0.0
         for transaction in transactions:
-            stock_index = self.find_stock(transaction.name)
+            stock_index = self.find_stock(transaction.name, self.__stocks_after_process)
             if (transaction.operation_type == TransactionTypes.PURCHASE):
                 self.__total_purchase['fi'] += transaction.price * transaction.ammount
                 if (stock_index != -1):
-                    stock = self.__stocks[stock_index]
+                    stock = self.__stocks_after_process[stock_index]
                     stock_price = stock.price
                     stock_ammount = stock.ammount
                     new_ammount = stock_ammount + transaction.ammount
@@ -236,10 +240,10 @@ class Control:
                 else:
                     new_stock = Stock(transaction.name, transaction.price, transaction.category, transaction.ammount,
                         transaction.paid_fares)
-                    self.__stocks.append(new_stock)
+                    self.__stocks_after_process.append(new_stock)
             else:
                 if (stock_index != -1):
-                    stock = self.__stocks[stock_index]
+                    stock = self.__stocks_after_process[stock_index]
                     self.__total_sale['fi'] += transaction.price * transaction.ammount
                     fares = (stock.paid_fares / stock.ammount) * transaction.ammount + transaction.paid_fares
                     profit = transaction.price * transaction.ammount - stock.price * transaction.ammount - fares
@@ -248,15 +252,17 @@ class Control:
                     stock.paid_fares -= fares
                     if (stock.ammount < 0):
                         return False
-                    elif (self.__stocks[stock_index].ammount == 0):
-                        del self.__stocks[stock_index]
+                    elif (self.__stocks_after_process[stock_index].ammount == 0):
+                        del self.__stocks_after_process[stock_index]
                 else:
                     return False
-        if (self.__total_profit['fi'] - self.__accumulated_loss['fi']) > 0:
+
+        self.__total_profit['fi'] -= self.__accumulated_loss_after_process['fi']
+        if self.__total_profit['fi'] > 0:
             self.__total_due_tax['fi'] = self.__fi_tax * self.__total_profit['fi']
+            self.__accumulated_loss_after_process['fi'] = 0.0
         else:
-            self.__accumulated_loss['fi'] = self.__accumulated_loss['fi'] \
-                - self.__total_profit['fi']
+            self.__accumulated_loss_after_process['fi'] = -1 * self.__total_profit['fi']
         return True
 
 # Process day trade transactions
@@ -285,11 +291,12 @@ class Control:
                 transaction.ammount = 0
                 transactions[i+1].ammount = 0
 
-        if (self.__total_profit['day_trade'] - self.__accumulated_loss['day_trade']) > 0:
+        self.__total_profit['day_trade'] -= self.__accumulated_loss_after_process['day_trade']
+        if self.__total_profit['day_trade'] > 0:
             self.__total_due_tax['day_trade'] = self.__day_trade_tax * self.__total_profit['day_trade']
+            self.__accumulated_loss_after_process['day_trade'] = 0.0
         else:
-            self.__accumulated_loss['day_trade'] = self.__accumulated_loss['day_trade'] \
-                - self.__total_profit['day_trade']
+            self.__accumulated_loss_after_process['day_trade'] = -1 * self.__total_profit['day_trade']
         return True
 
 # Process normal transactions
@@ -301,14 +308,13 @@ class Control:
         self.__total_profit['normal'] = 0.0
         self.__total_due_tax['normal'] = 0.0
         for transaction in transactions:
-            stock_index = self.find_stock(transaction.name)
+            stock_index = self.find_stock(transaction.name, self.__stocks_after_process)
             if (transaction.operation_type == TransactionTypes.PURCHASE):
                 self.__total_purchase['normal'] += transaction.price * transaction.ammount
                 if (stock_index != -1):
-                    stock = self.__stocks[stock_index]
+                    stock = self.__stocks_after_process[stock_index]
                     stock_price = stock.price
                     stock_ammount = stock.ammount
-                    stock_fares = stock.paid_fares
                     new_ammount = stock_ammount + transaction.ammount
                     stock.price = (stock_price * stock_ammount + transaction.price * transaction.ammount) / new_ammount
                     stock.ammount = new_ammount
@@ -316,10 +322,10 @@ class Control:
                 else:
                     new_stock = Stock(transaction.name, transaction.price, transaction.category, transaction.ammount,
                         transaction.paid_fares)
-                    self.__stocks.append(new_stock)
+                    self.__stocks_after_process.append(new_stock)
             else:
                 if (stock_index != -1):
-                    stock = self.__stocks[stock_index]
+                    stock = self.__stocks_after_process[stock_index]
                     self.__total_sale['normal'] += transaction.price * transaction.ammount
                     fares = (stock.paid_fares / stock.ammount) * transaction.ammount + transaction.paid_fares
                     profit = transaction.price * transaction.ammount - stock.price * transaction.ammount - fares
@@ -328,22 +334,26 @@ class Control:
                     stock.paid_fares -= fares
                     if (stock.ammount < 0):
                         return False
-                    elif (self.__stocks[stock_index].ammount == 0):
-                        del self.__stocks[stock_index]
+                    elif (self.__stocks_after_process[stock_index].ammount == 0):
+                        del self.__stocks_after_process[stock_index]
                 else:
                     return False
-        if (self.__total_profit['normal'] - self.__accumulated_loss['normal']) > 0:
+
+        self.__total_profit['normal'] -=  self.__accumulated_loss_after_process['normal']
+        if self.__total_profit['normal'] > 0:
             if (self.__total_sale['normal'] > self.__normal_no_tax_sale_value):
                 self.__total_due_tax['normal'] = self.__normal_tax * self.__total_profit['normal']
         else:
-            self.__accumulated_loss['normal'] = self.__accumulated_loss['normal'] \
-                - self.__total_profit['normal']
+            self.__accumulated_loss_after_process['normal'] = -1 * self.__total_profit['normal']
         return True
 
 # Save operations
 #----------------------------------------------------------------------------------------------------------------------
     def save_operations(self):
         logging.debug('Saving the registered operations...')
+        self.__stocks = copy.copy(self.__stocks_after_process)
+        self.__accumulated_loss = copy.copy(self.__accumulated_loss_after_process)
+        self.__accumulated_darf = copy.copy(self.__accumulated_darf_after_process)
         # save the operations in the database
         # self.__stocks = copy.copy(self.__evaluated_stocks)
         # self.__accumulated_loss = copy.copy(self.__accumulated_loss_evaluated)
