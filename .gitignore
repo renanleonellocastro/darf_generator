@@ -11,5 +11,7 @@ include/__pycache__/stock_ui.cpython-36.pyc
 include/__pycache__/__init__.cpython-36.pyc
 include/__pycache__/transaction.cpython-36.pyc
 include/__pycache__/stock_widget.cpython-36.pyc
+include/__pycache__/stock_add_ui.cpython-36.pyc
 include/__pycache__/stock_list_ui.cpython-36.pyc
+include/__pycache__/stock_add_screen.cpython-36.pyc
 include/__pycache__/stock_list_screen.cpython-36.pyc
