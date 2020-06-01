@@ -2,8 +2,10 @@
 
 pyside2-uic ui/gui.ui -o include/gui_ui.py
 pyside2-uic ui/stock.ui -o include/stock_ui.py
+pyside2-uic ui/transaction.ui -o include/transaction_ui.py
 pyside2-uic ui/stock_add.ui -o include/stock_add_ui.py
 pyside2-uic ui/stock_list.ui -o include/stock_list_ui.py
+pyside2-uic ui/transaction_list.ui -o include/transaction_list_ui.py
 PYTHONPATH=$(pwd)
 
 #https://likegeeks.com/pyqt5-tutorial/

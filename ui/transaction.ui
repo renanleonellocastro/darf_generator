@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Stock</class>
- <widget class="QWidget" name="Stock">
+ <class>Transaction</class>
+ <widget class="QWidget" name="Transaction">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>175</height>
+    <height>214</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -477,27 +477,15 @@
    <string>Gerador de Darf</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="leftMargin">
-    <number>2</number>
-   </property>
-   <property name="topMargin">
-    <number>2</number>
-   </property>
-   <property name="rightMargin">
-    <number>2</number>
-   </property>
-   <property name="bottomMargin">
-    <number>2</number>
-   </property>
    <item>
-    <widget class="QFrame" name="stockMainFrame">
+    <widget class="QFrame" name="transactionMainFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="stockMainFrameLayout" stretch="2,8">
+     <layout class="QVBoxLayout" name="transactionMainFrameLayout" stretch="2,8">
       <property name="leftMargin">
        <number>7</number>
       </property>
@@ -511,12 +499,12 @@
        <number>7</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="stockEditLayout" stretch="3,1">
+       <layout class="QHBoxLayout" name="transactionEditLayout" stretch="3,1">
         <property name="spacing">
          <number>6</number>
         </property>
         <item>
-         <widget class="QLabel" name="stockLabel">
+         <widget class="QLabel" name="transactionLabel">
           <property name="font">
            <font>
             <pointsize>18</pointsize>
@@ -526,7 +514,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Ação</string>
+           <string>Transação</string>
           </property>
          </widget>
         </item>
@@ -552,24 +540,41 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="stockPropertiesLayout" stretch="2,3">
+       <layout class="QHBoxLayout" name="transactionPropertiesLayout" stretch="0,0,0">
+        <property name="spacing">
+         <number>6</number>
+        </property>
         <item>
-         <layout class="QVBoxLayout" name="nameCategoryTotalLayout" stretch="1,2,2">
+         <layout class="QVBoxLayout" name="idNameCategoryTotalLayout" stretch="0,0,0,0">
           <item>
-           <spacer name="nameCategoryTotalPriceSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
+           <layout class="QHBoxLayout" name="idLayout" stretch="1,10">
+            <item>
+             <widget class="QLabel" name="idLabel">
+              <property name="text">
+               <string>ID:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="idInput">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximum">
+               <number>999999999</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QComboBox" name="categoryInput">
@@ -599,6 +604,38 @@
             <item>
              <property name="text">
               <string>Normal</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="operationTypeInput">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <property name="maxVisibleItems">
+             <number>2</number>
+            </property>
+            <property name="maxCount">
+             <number>2</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Compra</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Venda</string>
              </property>
             </item>
            </widget>
@@ -654,21 +691,77 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="valueAmmountFaresLayout">
+         <spacer name="mainHorizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="dataValueAmmountFaresLayout">
           <item>
-           <layout class="QHBoxLayout" name="valueLayout">
+           <layout class="QHBoxLayout" name="dataLayout" stretch="1,2">
             <item>
-             <widget class="QLabel" name="valueLabel">
+             <widget class="QLabel" name="operationDateLabel">
               <property name="text">
-               <string>Valor:</string>
+               <string>Data:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="valueInput">
+             <widget class="QDateEdit" name="operationDateInput">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="displayFormat">
+               <string>dd/MM/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+              <property name="date">
+               <date>
+                <year>2020</year>
+                <month>1</month>
+                <day>1</day>
+               </date>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="priceLayout" stretch="1,2">
+            <item>
+             <widget class="QLabel" name="priceLabel">
+              <property name="text">
+               <string>Valor:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="priceInput">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -679,21 +772,21 @@
                </sizepolicy>
               </property>
               <property name="maximum">
-               <double>999999999.000000000000000</double>
+               <double>9999999.000000000000000</double>
               </property>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="ammountLayout">
+           <layout class="QHBoxLayout" name="ammountLayout" stretch="1,2">
             <item>
              <widget class="QLabel" name="ammountLabel">
               <property name="text">
                <string>Quantidade:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -716,14 +809,14 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="faresLayout">
+           <layout class="QHBoxLayout" name="faresLayout" stretch="1,2">
             <item>
              <widget class="QLabel" name="faresLabel">
               <property name="text">
                <string>Taxas:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -739,7 +832,7 @@
                </sizepolicy>
               </property>
               <property name="maximum">
-               <double>9999999.000000000000000</double>
+               <double>99999999.000000000000000</double>
               </property>
              </widget>
             </item>
