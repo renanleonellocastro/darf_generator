@@ -707,9 +707,9 @@
          </spacer>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="dataValueAmmountFaresLayout">
+         <layout class="QVBoxLayout" name="dateValueAmmountFaresLayout">
           <item>
-           <layout class="QHBoxLayout" name="dataLayout" stretch="1,2">
+           <layout class="QHBoxLayout" name="operationDateLayout" stretch="1,2">
             <item>
              <widget class="QLabel" name="operationDateLabel">
               <property name="text">
