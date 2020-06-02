@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import sys
 import logging
 from PySide2 import QtCore
 from PySide2 import QtWidgets
@@ -16,13 +15,13 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__stock_add_screen = StockAddScreen(self)
+        self.stock_add_screen = StockAddScreen(self)
         self.__stock_list_screen = StockListScreen(self)
         self.__transaction_add_screen = TransactionAddScreen(self)
         self.__transaction_list_screen = TransactionListScreen(self)
         self.setupUi(self)
         self.center(self)
-        self.center(self.__stock_add_screen)
+        self.center(self.stock_add_screen)
         self.center(self.__stock_list_screen)
         self.center(self.__transaction_add_screen)
         self.center(self.__transaction_list_screen)
@@ -30,7 +29,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         self.consultStockButton.clicked.connect(self.on_consult_stocks_button_clicked)
         self.addTransactionButton.clicked.connect(self.on_add_transaction_button_clicked)
         self.consultTransactionButton.clicked.connect(self.on_consult_transactions_button_clicked)
-        self.__stock_add_screen.exit_add_stock_signal.connect(self.exit_add_stock)
+        self.stock_add_screen.exit_add_stock_signal.connect(self.exit_add_stock)
         self.__stock_list_screen.exit_consult_stocks_signal.connect(self.exit_consult_stocks)
         self.__transaction_add_screen.exit_add_transaction_signal.connect(self.exit_add_transaction)
         self.__transaction_list_screen.exit_consult_transactions_signal.connect(self.exit_consult_transactions)
@@ -46,7 +45,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 # SLOT - Add stock button clicked
 #----------------------------------------------------------------------------------------------------------------------
     def on_add_stock_button_clicked(self):
-        self.__stock_add_screen.show()
+        self.stock_add_screen.show()
         self.close()
 
 # SLOT - Consult the user stocks button clicked
@@ -72,7 +71,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
     @QtCore.Slot()
     def exit_add_stock(self):
         self.show()
-        self.__stock_add_screen.close()
+        self.stock_add_screen.close()
 
 # SLOT - Fires when user click in back button on consult stocks screen
 #----------------------------------------------------------------------------------------------------------------------
@@ -100,11 +99,4 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
     def closeEvent(self, event):
         logging.debug("Fechando...")
 
-# Executable lines
-#----------------------------------------------------------------------------------------------------------------------
-app = QtWidgets.QApplication(sys.argv)
-app.setStyle('Fusion')
-application = Gui()
-application.show()
-app.exec_()
 #----------------------------------------------------------------------------------------------------------------------

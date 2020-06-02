@@ -14,12 +14,11 @@ class Transaction(stock.Stock):
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, name="NoName", price=0.0, category=stock.StockTypes.NORMAL, ammount=1, paid_fares=0.0, 
-        day=1, month=1, year=1969, operation_type=TransactionTypes.PURCHASE, operation_id=0, debug=False):
-        super().__init__(name, price, category, ammount, paid_fares, debug)
+        day=1, month=1, year=1969, operation_type=TransactionTypes.PURCHASE, operation_id=0):
+        super().__init__(name, price, category, ammount, paid_fares)
         self.__operation_date = date(year, month, day)
         self.__operation_type = operation_type
         self.__operation_id = operation_id
-        self.__debug = debug
 
 # Get class member "operation_date"
 #----------------------------------------------------------------------------------------------------------------------

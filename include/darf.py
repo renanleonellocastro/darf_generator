@@ -13,7 +13,7 @@ class DarfGenerator:
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
-    def __init__(self, debug=False):
+    def __init__(self):
         self.__endpoint = "http://www31.receita.fazenda.gov.br/SicalcWeb/UF.asp?AP=P&Person"\
             + "=N&TipTributo=1&FormaPagto=1"
         copy(os.path.dirname(__file__) + "/../libs/chromedriver", "/tmp/chromedriver")
@@ -21,7 +21,6 @@ class DarfGenerator:
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
         self.__web = webdriver.Chrome(executable_path="/tmp/chromedriver", options=options)
-        self.__debug = debug
 
 # Find html option in a list of options
 #----------------------------------------------------------------------------------------------------------------------
@@ -145,6 +144,4 @@ class DarfGenerator:
         #Finish generation
         self.__web.close()
         self.__web.quit()
-
 #----------------------------------------------------------------------------------------------------------------------
-

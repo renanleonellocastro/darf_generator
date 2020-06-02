@@ -12,13 +12,12 @@ class Stock:
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
-    def __init__(self, name="NoName", price=0.0, category=StockTypes.NORMAL, ammount=1, paid_fares=0.0, debug=False):
+    def __init__(self, name="NoName", price=0.0, category=StockTypes.NORMAL, ammount=1, paid_fares=0.0):
         self.__name = name
         self.__price = price
         self.__category = category
         self.__ammount = ammount
         self.__paid_fares = paid_fares
-        self.__debug = debug
 
 # Get class member "name"
 #----------------------------------------------------------------------------------------------------------------------
@@ -97,5 +96,4 @@ class Stock:
         logging.debug('Return the total price value...')
         total = self.__ammount * self.__price
         return total
-
 #----------------------------------------------------------------------------------------------------------------------

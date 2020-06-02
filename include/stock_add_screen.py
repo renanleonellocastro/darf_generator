@@ -2,6 +2,8 @@
 
 from PySide2 import QtCore
 from PySide2 import QtWidgets
+from include.stock import Stock
+from include.stock import StockTypes
 from include.stock_add_ui import Ui_StockAdd
 
 class StockAddScreen(QtWidgets.QWidget, Ui_StockAdd):
@@ -9,12 +11,14 @@ class StockAddScreen(QtWidgets.QWidget, Ui_StockAdd):
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
     exit_add_stock_signal = QtCore.Signal()
+    add_stock_signal = QtCore.Signal(Stock)
 
 # Constructor
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
         super(StockAddScreen, self).__init__()
         self.setupUi(self)
+        self.__stock = Stock()
         self.totalValueLabel.setText("0.00")
         self.nameInput.textChanged.connect(self.on_name_changed)
         self.priceInput.valueChanged.connect(self.on_price_changed)
@@ -40,12 +44,20 @@ class StockAddScreen(QtWidgets.QWidget, Ui_StockAdd):
 # SLOT - Save the stock when user press the save button
 #----------------------------------------------------------------------------------------------------------------------  
     def on_save_button_clicked(self):
-        if self.nameInput.text() == "":
+        self.__stock.name = self.nameInput.text()
+        self.__stock.price = self.priceInput.value()
+        self.__stock.ammount = self.ammountInput.value()
+        self.__stock.paid_fares = self.faresInput.value()
+        self.__stock.category = StockTypes.FI if self.categoryInput.currentIndex == 0 else StockTypes.NORMAL
+        self.add_stock_signal.emit(self.__stock)
+
+# SLOT - Fires when receive the update signal from the control
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(str)
+    def update_add_stock_slot(self, error_message):
+        if error_message != "":
             self.errorLabel.setStyleSheet("color: red")
-            self.errorLabel.setText("Erro! Nome da ação inválido")
-        elif self.ammountInput.value() == 0:
-            self.errorLabel.setStyleSheet("color: red")
-            self.errorLabel.setText("Erro! Quantidade não pode ser 0")
+            self.errorLabel.setText(error_message)
         else:
             self.errorLabel.setStyleSheet("color: green")
             self.errorLabel.setText("Ação %s salva com sucesso!" %self.nameInput.text())

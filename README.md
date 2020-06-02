@@ -15,7 +15,7 @@ Para executar a aplicação, no estado atual de desenvolvimento, insira os segui
 source configure
 ```
 ```shell
-python3 ./src/main.py
+python3 ./src/application.py
 ```
 
 ## Funcionamento

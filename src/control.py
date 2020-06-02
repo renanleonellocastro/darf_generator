@@ -2,16 +2,22 @@
 
 import copy
 import logging
+from PySide2 import QtCore
 from include.stock import Stock
 from include.stock import StockTypes
 from include.transaction import Transaction
 from include.transaction import TransactionTypes
 
-class Control:
+class Control(QtCore.QObject):
+
+# Definition of Qt Signals
+#----------------------------------------------------------------------------------------------------------------------
+    update_add_stock_signal = QtCore.Signal(str)
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
-    def __init__(self, debug=False):
+    def __init__(self):
+        super().__init__()
         self.__stocks = []
         self.__stocks_after_process = []
         self.__transactions = []
@@ -29,8 +35,6 @@ class Control:
         self.__fi_tax = 0.20
         self.__day_trade_tax = 0.20
         self.__minimum_darf_value = 10.0
-        self.__debug = debug
-        self.set_log_level(self.__debug)
 
 # Add a new stock to the class
 #----------------------------------------------------------------------------------------------------------------------
@@ -38,7 +42,7 @@ class Control:
         logging.debug('Adding a new stock: %s', name)
         stock_list = custom_stock_list if custom_stock_list else self.__stocks
         if (self.find_stock(name, custom_stock_list) == -1):
-            stock = Stock(name,price,category,ammount,paid_fares,self.__debug)
+            stock = Stock(name,price,category,ammount,paid_fares)
             stock_list.append(stock)
             return True
         else:
@@ -97,7 +101,7 @@ class Control:
         operation_type, operation_id):
         logging.debug('Adding new transaction: %s : id: %d', name, operation_id)
         transaction = Transaction(name,price,category,ammount,paid_fares,day,month,year,
-            operation_type,operation_id,self.__debug)
+            operation_type,operation_id)
         self.__transactions.append(transaction)
 
 # Edit a transaction in the class
@@ -456,13 +460,18 @@ class Control:
         else:
             logging.error('Error calculating the darf!')
 
-# Set log level
+# SLOT - Fires when receive an add stock signal from the gui
 #----------------------------------------------------------------------------------------------------------------------
-    def set_log_level(self, debug):
-        if (debug):
-            logging.basicConfig(level=1)
-            logging.debug('Log debug level activated!')
+    @QtCore.Slot(Stock)
+    def add_stock_slot(self, new_stock):
+        error_message = ""
+        if new_stock.name == "":
+            error_message = "Erro! Nome da ação inválido"
+        elif new_stock.ammount == 0:
+            error_message = "Erro! Quantidade não pode ser 0"
         else:
-            logging.basicConfig(level=logging.INFO)
-
+            if not self.add_stock(new_stock.name, new_stock.price, new_stock.category,\
+                new_stock.ammount, new_stock.paid_fares):
+                error_message = "Erro! Ação já existe!"
+        self.update_add_stock_signal.emit(error_message)
 #----------------------------------------------------------------------------------------------------------------------

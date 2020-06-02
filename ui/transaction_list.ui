@@ -537,7 +537,7 @@
         <x>0</x>
         <y>0</y>
         <width>470</width>
-        <height>950</height>
+        <height>527</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="scrollAreaContentsLayout">
@@ -545,94 +545,6 @@
         <layout class="QVBoxLayout" name="transactionListLayout">
          <item>
           <widget class="TransactionWidget" name="transaction1" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>450</width>
-             <height>180</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>180</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="TransactionWidget" name="transaction2" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>450</width>
-             <height>180</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>180</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="TransactionWidget" name="transaction3" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>450</width>
-             <height>180</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>180</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="TransactionWidget" name="transaction4" native="true">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>450</width>
-             <height>180</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>180</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="TransactionWidget" name="transaction5" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>

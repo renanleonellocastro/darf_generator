@@ -12,7 +12,7 @@ class Test:
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, debug=False):
         self.__debug = debug
-        self.__control = Control(self.__debug)
+        self.__control = Control()
 
 # Check Results
 #----------------------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ class Test:
 #----------------------------------------------------------------------------------------------------------------------
     def test1(self):
         logging.debug('Executing test 1')
-        self.__control = Control(self.__debug)
+        self.__control = Control()
         self.__control.add_stock('fi', 10.0, StockTypes.FI, 10, 1.20)
         self.__control.add_transaction('fi', 10.0, StockTypes.FI, 10, 1.57, 1, 1, 2020,\
         TransactionTypes.PURCHASE, 1)
@@ -67,7 +67,7 @@ class Test:
 #----------------------------------------------------------------------------------------------------------------------
     def test2(self):
         logging.debug('Executing test 2')
-        self.__control = Control(self.__debug)
+        self.__control = Control()
         self.__control.add_stock('normal', 10.0, StockTypes.NORMAL, 10, 2.40)
         self.__control.add_transaction('normal', 10.0, StockTypes.NORMAL, 10, 1.75, 2, 1, 2020,\
         TransactionTypes.PURCHASE, 1)
@@ -84,7 +84,7 @@ class Test:
 #----------------------------------------------------------------------------------------------------------------------
     def test3(self):
         logging.debug('Executing test 3')
-        self.__control = Control(self.__debug)
+        self.__control = Control()
         self.__control.add_stock('normal', 10.0, StockTypes.NORMAL, 10, 2.40)
         self.__control.add_transaction('normal', 10.0, StockTypes.NORMAL, 1000, 1.75, 2, 1, 2020,\
         TransactionTypes.PURCHASE, 1)
@@ -100,7 +100,7 @@ class Test:
 #----------------------------------------------------------------------------------------------------------------------
     def test4(self):
         logging.debug('Executing test 4')
-        self.__control = Control(self.__debug)
+        self.__control = Control()
         self.__control.add_stock('day_trade', 10.0, StockTypes.NORMAL, 10, 3.02)
         self.__control.add_transaction('day_trade', 15.0, StockTypes.NORMAL, 10, 2.46, 2, 1, 2020,\
         TransactionTypes.PURCHASE, 1)
