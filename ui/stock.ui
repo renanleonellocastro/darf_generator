@@ -6,26 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>175</height>
+    <width>450</width>
+    <height>165</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
+    <width>450</width>
     <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>16777215</height>
+    <height>165</height>
    </size>
   </property>
   <property name="palette">
@@ -476,7 +476,7 @@
   <property name="windowTitle">
    <string>Gerador de Darf</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="StockLayout">
    <property name="leftMargin">
     <number>2</number>
    </property>
@@ -553,6 +553,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="stockPropertiesLayout" stretch="2,3">
+        <property name="spacing">
+         <number>10</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="nameCategoryTotalLayout" stretch="1,2,2">
           <item>
@@ -655,15 +658,18 @@
         </item>
         <item>
          <layout class="QVBoxLayout" name="valueAmmountFaresLayout">
+          <property name="leftMargin">
+           <number>10</number>
+          </property>
           <item>
-           <layout class="QHBoxLayout" name="valueLayout">
+           <layout class="QHBoxLayout" name="valueLayout" stretch="1,2">
             <item>
              <widget class="QLabel" name="valueLabel">
               <property name="text">
                <string>Valor:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -686,14 +692,14 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="ammountLayout">
+           <layout class="QHBoxLayout" name="ammountLayout" stretch="1,2">
             <item>
              <widget class="QLabel" name="ammountLabel">
               <property name="text">
                <string>Quantidade:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -716,14 +722,14 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="faresLayout">
+           <layout class="QHBoxLayout" name="faresLayout" stretch="1,2">
             <item>
              <widget class="QLabel" name="faresLabel">
               <property name="text">
                <string>Taxas:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>

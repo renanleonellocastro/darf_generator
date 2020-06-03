@@ -48,7 +48,7 @@ class StockAddScreen(QtWidgets.QWidget, Ui_StockAdd):
         self.__stock.price = self.priceInput.value()
         self.__stock.ammount = self.ammountInput.value()
         self.__stock.paid_fares = self.faresInput.value()
-        self.__stock.category = StockTypes.FI if self.categoryInput.currentIndex == 0 else StockTypes.NORMAL
+        self.__stock.category = StockTypes.FI if self.categoryInput.currentIndex() == 0 else StockTypes.NORMAL
         self.add_stock_signal.emit(self.__stock)
 
 # SLOT - Fires when receive the update signal from the control

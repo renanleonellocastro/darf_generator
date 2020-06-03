@@ -13,6 +13,7 @@ class Control(QtCore.QObject):
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
     update_add_stock_signal = QtCore.Signal(str)
+    update_stock_list_signal = QtCore.Signal(Stock)
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
@@ -473,5 +474,7 @@ class Control(QtCore.QObject):
             if not self.add_stock(new_stock.name, new_stock.price, new_stock.category,\
                 new_stock.ammount, new_stock.paid_fares):
                 error_message = "Erro! Ação já existe!"
+            else:
+                self.update_stock_list_signal.emit(new_stock)
         self.update_add_stock_signal.emit(error_message)
 #----------------------------------------------------------------------------------------------------------------------

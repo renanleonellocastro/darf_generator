@@ -22,6 +22,7 @@ def execute():
 def connect_qt_signals_and_slots(view, control):
     view.stock_add_screen.add_stock_signal.connect(control.add_stock_slot)
     control.update_add_stock_signal.connect(view.stock_add_screen.update_add_stock_slot)
+    control.update_stock_list_signal.connect(view.stock_list_screen.update_stock_list_slot)
 
 # Set log level
 #----------------------------------------------------------------------------------------------------------------------
