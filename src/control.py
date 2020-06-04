@@ -14,6 +14,11 @@ class Control(QtCore.QObject):
 #----------------------------------------------------------------------------------------------------------------------
     update_add_stock_signal = QtCore.Signal(str)
     update_stock_list_signal = QtCore.Signal(Stock)
+    update_purchase_values_signal = QtCore.Signal(float, float, float)
+    update_sale_values_signal = QtCore.Signal(float, float, float)
+    update_profit_values_signal = QtCore.Signal(float, float, float)
+    update_accumulated_loss_values_signal = QtCore.Signal(float, float, float)
+    update_due_tax_values_signal = QtCore.Signal(float, float, float, float)
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
@@ -157,16 +162,16 @@ class Control(QtCore.QObject):
     def __process_transactions(self):
         logging.debug('Processing the registered transactions...')
         self.__darf_value = 0.0
-        self.__stocks_after_process = copy.copy(self.__stocks)
-        self.__accumulated_darf_after_process = copy.copy(self.__accumulated_darf)
-        self.__accumulated_loss_after_process = copy.copy(self.__accumulated_loss)
-        transactions = sorted(self.__transactions, key=lambda x: (x.operation_date, x.operation_type.value))
+        self.__stocks_after_process = copy.deepcopy(self.__stocks)
+        self.__accumulated_darf_after_process = copy.deepcopy(self.__accumulated_darf)
+        self.__accumulated_loss_after_process = copy.deepcopy(self.__accumulated_loss)
+        transactions = sorted(copy.deepcopy(self.__transactions), key=lambda x: (x.operation_date, x.operation_type.value))
         fi_transactions = []
         day_trade_transactions = []
         normal_transactions = []
         for i in range(len(transactions)):
             if transactions[i].category == StockTypes.FI:
-                fi_transactions.append(copy.copy(transactions[i]))
+                fi_transactions.append(copy.deepcopy(transactions[i]))
             elif transactions[i].category == StockTypes.NORMAL:
                 j = i + 1
                 while (j < len(transactions) and transactions[j].operation_date == transactions[i].operation_date \
@@ -184,30 +189,30 @@ class Control(QtCore.QObject):
                             transactions[j].paid_fares = 0.0
                         else:
                             if (transactions[j].ammount < transactions[i].ammount):
-                                new = copy.copy(transactions[i])
+                                new = copy.deepcopy(transactions[i])
                                 new.ammount = transactions[j].ammount
                                 new.paid_fares = (transactions[i].paid_fares / transactions[i].ammount) * new.ammount
                                 transactions[j].category = StockTypes.DAY_TRADE
                                 new.category = StockTypes.DAY_TRADE
                                 day_trade_transactions.append(new)
-                                day_trade_transactions.append(copy.copy(transactions[j]))
+                                day_trade_transactions.append(copy.deepcopy(transactions[j]))
                                 transactions[i].paid_fares = transactions[i].paid_fares - new.paid_fares
                                 transactions[i].ammount-=new.ammount
                                 transactions[j].ammount = 0
                             else:
-                                new = copy.copy(transactions[j])
+                                new = copy.deepcopy(transactions[j])
                                 new.ammount = transactions[i].ammount
                                 new.paid_fares = (transactions[j].paid_fares / transactions[j].ammount) * new.ammount
                                 transactions[i].category = StockTypes.DAY_TRADE
                                 new.category = StockTypes.DAY_TRADE
                                 day_trade_transactions.append(new)
-                                day_trade_transactions.append(copy.copy(transactions[i]))
+                                day_trade_transactions.append(copy.deepcopy(transactions[i]))
                                 transactions[j].paid_fares = transactions[j].paid_fares - new.paid_fares
                                 transactions[j].ammount-=new.ammount
                                 transactions[i].ammount = 0
                     j+=1
                 if (transactions[i].ammount != 0 and transactions[i].category != StockTypes.DAY_TRADE):
-                    normal_transactions.append(copy.copy(transactions[i]))
+                    normal_transactions.append(copy.deepcopy(transactions[i]))
         if (not self.__process_fi_transactions(fi_transactions)):
             return False
         if (not self.__process_day_trade_transactions(day_trade_transactions)):
@@ -356,22 +361,22 @@ class Control(QtCore.QObject):
 #----------------------------------------------------------------------------------------------------------------------
     def save_operations(self):
         logging.debug('Saving the registered operations...')
-        self.__stocks = copy.copy(self.__stocks_after_process)
-        self.__accumulated_loss = copy.copy(self.__accumulated_loss_after_process)
-        self.__accumulated_darf = copy.copy(self.__accumulated_darf_after_process)
+        self.__stocks = copy.deepcopy(self.__stocks_after_process)
+        self.__accumulated_loss = copy.deepcopy(self.__accumulated_loss_after_process)
+        self.__accumulated_darf = copy.deepcopy(self.__accumulated_darf_after_process)
         # save the operations in the database
-        # self.__stocks = copy.copy(self.__evaluated_stocks)
-        # self.__accumulated_loss = copy.copy(self.__accumulated_loss_evaluated)
-        # self.__accumulated_darf = copy.copy(self.__accumulated_darf_evaluated)
+        # self.__stocks = copy.deepcopy(self.__evaluated_stocks)
+        # self.__accumulated_loss = copy.deepcopy(self.__accumulated_loss_evaluated)
+        # self.__accumulated_darf = copy.deepcopy(self.__accumulated_darf_evaluated)
 
 # Load operations
 #----------------------------------------------------------------------------------------------------------------------
     def load_operations(self):
         logging.debug('Loading the saved operations...')
         # Load the operations from the database
-        # self.__stocks = copy.copy(self.__evaluated_stocks)
-        # self.__accumulated_loss = copy.copy(self.__accumulated_loss_evaluated)
-        # self.__accumulated_darf = copy.copy(self.__accumulated_darf_evaluated)
+        # self.__stocks = copy.deepcopy(self.__evaluated_stocks)
+        # self.__accumulated_loss = copy.deepcopy(self.__accumulated_loss_evaluated)
+        # self.__accumulated_darf = copy.deepcopy(self.__accumulated_darf_evaluated)
 
 # Get total purchase of fi stocks
 #----------------------------------------------------------------------------------------------------------------------
@@ -458,8 +463,26 @@ class Control(QtCore.QObject):
         logging.debug('Calculating the darf')
         if (self.__process_transactions()):
             logging.debug('Darf calculated!')
+            return True
         else:
             logging.error('Error calculating the darf!')
+            return False
+
+# Update all the calculated values on the gui sending signals to it
+#----------------------------------------------------------------------------------------------------------------------
+    def update_values_on_gui(self):
+        logging.debug('Send signals to update the calculated values on the gui')
+        self.update_purchase_values_signal.emit(self.get_total_purchase_of_normal_stocks(),\
+            self.get_total_purchase_of_day_trade_stocks(), self.get_total_purchase_of_fi_stocks())
+        self.update_sale_values_signal.emit(self.get_total_sale_of_normal_stocks(),\
+            self.get_total_sale_of_day_trade_stocks(), self.get_total_sale_of_fi_stocks())
+        self.update_profit_values_signal.emit(self.get_total_profit_of_normal_stocks(),\
+            self.get_total_profit_of_day_trade_stocks(), self.get_total_profit_of_fi_stocks())
+        self.update_accumulated_loss_values_signal.emit(self.__accumulated_loss_after_process['normal'],\
+            self.__accumulated_loss_after_process['day_trade'], self.__accumulated_loss_after_process['fi'])
+        self.update_due_tax_values_signal.emit(self.get_total_due_tax_of_normal_stocks(),\
+            self.get_total_due_tax_of_day_trade_stocks(), self.get_total_due_tax_of_fi_stocks(), self.darf_value)
+
 
 # SLOT - Fires when receive an add stock signal from the gui
 #----------------------------------------------------------------------------------------------------------------------
@@ -477,4 +500,6 @@ class Control(QtCore.QObject):
             else:
                 self.update_stock_list_signal.emit(new_stock)
         self.update_add_stock_signal.emit(error_message)
+        self.calculate_darf()
+        self.update_values_on_gui()
 #----------------------------------------------------------------------------------------------------------------------

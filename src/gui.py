@@ -94,6 +94,47 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         self.show()
         self.__transaction_list_screen.close()
 
+# SLOT - Fires when receive a signal with the purchase values from the control
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(float, float, float)
+    def update_purchase_values_slot(self, swing_trade, day_trade, fi):
+        self.swingTradeTotalPurchaseLabel.setText("R$ %.2f"%swing_trade)
+        self.dayTradeTotalPurchaseLabel.setText("R$ %.2f"%day_trade)
+        self.realEstateFundsTotalPurchaseLabel.setText("R$ %.2f"%fi)
+
+# SLOT - Fires when receive a signal with the sale values from the control
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(float, float, float)
+    def update_sale_values_slot(self, swing_trade, day_trade, fi):
+        self.swingTradeTotalSoldLabel.setText("R$ %.2f"%swing_trade)
+        self.dayTradeTotalSoldLabel.setText("R$ %.2f"%day_trade)
+        self.realEstateFundsTotalSoldLabel.setText("R$ %.2f"%fi)
+
+# SLOT - Fires when receive a signal with the profit values from the control
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(float, float, float)
+    def update_profit_values_slot(self, swing_trade, day_trade, fi):
+        self.swingTradeTotalProfitLabel.setText("R$ %.2f"%swing_trade)
+        self.dayTradeTotalProfitLabel.setText("R$ %.2f"%day_trade)
+        self.realEstateFundsTotalProfitLabel.setText("R$ %.2f"%fi)
+
+# SLOT - Fires when receive a signal with the accumulated loss values from the control
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(float, float, float)
+    def update_accumulated_loss_values_slot(self, swing_trade, day_trade, fi):
+        self.swingTradeAccumulatedLossLabel.setText("R$ %.2f"%swing_trade)
+        self.dayTradeAccumulatedLossLabel.setText("R$ %.2f"%day_trade)
+        self.realEstateFundsAccumulatedLossLabel.setText("R$ %.2f"%fi)
+
+# SLOT - Fires when receive a signal with the due tax values from the control
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(float, float, float, float)
+    def update_due_tax_values_slot(self, swing_trade, day_trade, fi, total_darf):
+        self.swingTradeDueTaxLabel.setText("R$ %.2f"%swing_trade)
+        self.dayTradeDueTaxLabel.setText("R$ %.2f"%day_trade)
+        self.realEstateFundsDueTaxLabel.setText("R$ %.2f"%fi)
+        self.darfValueOutputLabel.setText("R$ %.2f"%total_darf)
+
 # Runs when the screen in closing
 #----------------------------------------------------------------------------------------------------------------------
     def closeEvent(self, event):

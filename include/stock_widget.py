@@ -21,7 +21,7 @@ class StockWidget(QtWidgets.QWidget, Ui_Stock):
 # Fill the current stock with the values of a given one
 #----------------------------------------------------------------------------------------------------------------------
     def set_stock(self, new_stock):
-        self.__stock = copy.copy(new_stock)
+        self.__stock = copy.deepcopy(new_stock)
         self.update_widget()
 
 # Update stock values with the values of the graphical elements

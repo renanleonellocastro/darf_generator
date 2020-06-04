@@ -23,6 +23,11 @@ def connect_qt_signals_and_slots(view, control):
     view.stock_add_screen.add_stock_signal.connect(control.add_stock_slot)
     control.update_add_stock_signal.connect(view.stock_add_screen.update_add_stock_slot)
     control.update_stock_list_signal.connect(view.stock_list_screen.update_stock_list_slot)
+    control.update_purchase_values_signal.connect(view.update_purchase_values_slot)
+    control.update_sale_values_signal.connect(view.update_sale_values_slot)
+    control.update_profit_values_signal.connect(view.update_profit_values_slot)
+    control.update_accumulated_loss_values_signal.connect(view.update_accumulated_loss_values_slot)
+    control.update_due_tax_values_signal.connect(view.update_due_tax_values_slot)
 
 # Set log level
 #----------------------------------------------------------------------------------------------------------------------
