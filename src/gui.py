@@ -21,10 +21,6 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         self.transaction_list_screen = TransactionListScreen(self)
         self.setupUi(self)
         self.center(self)
-        self.center(self.stock_add_screen)
-        self.center(self.stock_list_screen)
-        self.center(self.transaction_add_screen)
-        self.center(self.transaction_list_screen)
         self.addStockButton.clicked.connect(self.on_add_stock_button_clicked)
         self.consultStockButton.clicked.connect(self.on_consult_stocks_button_clicked)
         self.addTransactionButton.clicked.connect(self.on_add_transaction_button_clicked)
@@ -45,24 +41,28 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 # SLOT - Add stock button clicked
 #----------------------------------------------------------------------------------------------------------------------
     def on_add_stock_button_clicked(self):
+        self.stock_add_screen.setGeometry(self.geometry())
         self.stock_add_screen.show()
         self.close()
 
 # SLOT - Consult the user stocks button clicked
 #----------------------------------------------------------------------------------------------------------------------
     def on_consult_stocks_button_clicked(self):
+        self.stock_list_screen.setGeometry(self.geometry())
         self.stock_list_screen.show()
         self.close()
 
 # SLOT - Add transaction button clicked
 #----------------------------------------------------------------------------------------------------------------------
     def on_add_transaction_button_clicked(self):
+        self.transaction_add_screen.setGeometry(self.geometry())
         self.transaction_add_screen.show()
         self.close()
 
 # SLOT - Consult the user transactions button clicked
 #----------------------------------------------------------------------------------------------------------------------
     def on_consult_transactions_button_clicked(self):
+        self.transaction_list_screen.setGeometry(self.geometry())
         self.transaction_list_screen.show()
         self.close()
 
@@ -70,6 +70,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot()
     def exit_add_stock(self):
+        self.setGeometry(self.stock_add_screen.geometry())
         self.show()
         self.stock_add_screen.close()
 
@@ -77,6 +78,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot()
     def exit_consult_stocks(self):
+        self.setGeometry(self.stock_list_screen.geometry())
         self.show()
         self.stock_list_screen.close()
 
@@ -84,6 +86,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot()
     def exit_add_transaction(self):
+        self.setGeometry(self.transaction_add_screen.geometry())
         self.show()
         self.transaction_add_screen.close()
 
@@ -91,6 +94,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot()
     def exit_consult_transactions(self):
+        self.setGeometry(self.transaction_list_screen.geometry())
         self.show()
         self.transaction_list_screen.close()
 
