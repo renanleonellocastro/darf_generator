@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>214</height>
+    <height>215</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>0</height>
+    <height>215</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>16777215</height>
+    <height>215</height>
    </size>
   </property>
   <property name="palette">
@@ -476,7 +476,7 @@
   <property name="windowTitle">
    <string>Gerador de Darf</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="TransactionFormLayout">
    <item>
     <widget class="QFrame" name="transactionMainFrame">
      <property name="frameShape">

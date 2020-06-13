@@ -13,7 +13,9 @@ class Control(QtCore.QObject):
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
     update_add_stock_signal = QtCore.Signal(str)
+    update_add_transaction_signal = QtCore.Signal(str)
     update_stock_list_signal = QtCore.Signal(Stock)
+    update_transaction_list_signal = QtCore.Signal(Stock)
     update_purchase_values_signal = QtCore.Signal(float, float, float)
     update_sale_values_signal = QtCore.Signal(float, float, float)
     update_profit_values_signal = QtCore.Signal(float, float, float)
@@ -106,9 +108,14 @@ class Control(QtCore.QObject):
     def add_transaction(self, name, price, category, ammount, paid_fares, day, month, year,\
         operation_type, operation_id):
         logging.debug('Adding new transaction: %s : id: %d', name, operation_id)
-        transaction = Transaction(name,price,category,ammount,paid_fares,day,month,year,
+        if (self.find_transaction(operation_id) == -1):
+            transaction = Transaction(name,price,category,ammount,paid_fares,day,month,year,
             operation_type,operation_id)
-        self.__transactions.append(transaction)
+            self.__transactions.append(transaction)
+            return True
+        else:
+            logging.warning('Transaction: %d already exists!', operation_id)
+            return False
 
 # Edit a transaction in the class
 #----------------------------------------------------------------------------------------------------------------------
@@ -500,6 +507,27 @@ class Control(QtCore.QObject):
             else:
                 self.update_stock_list_signal.emit(new_stock)
         self.update_add_stock_signal.emit(error_message)
+        self.calculate_darf()
+        self.update_values_on_gui()
+
+# SLOT - Fires when receive an add transaction signal from the gui
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(Transaction)
+    def add_transaction_slot(self, new_transaction):
+        error_message = ""
+        if new_transaction.name == "":
+            error_message = "Erro! Nome da ação da transação inválido"
+        elif new_transaction.ammount == 0:
+            error_message = "Erro! Quantidade não pode ser 0"
+        else:
+            if not self.add_transaction(new_transaction.name, new_transaction.price, new_transaction.category,\
+                new_transaction.ammount, new_transaction.paid_fares, new_transaction.operation_date.day,\
+                new_transaction.operation_date.month, new_transaction.operation_date.year,\
+                new_transaction.operation_type, new_transaction.operation_id):
+                error_message = "Erro! Id da transação já existe!"
+            else:
+                self.update_transaction_list_signal.emit(new_transaction)
+        self.update_add_transaction_signal.emit(error_message)
         self.calculate_darf()
         self.update_values_on_gui()
 #----------------------------------------------------------------------------------------------------------------------
