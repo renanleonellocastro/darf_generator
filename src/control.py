@@ -16,6 +16,7 @@ class Control(QtCore.QObject):
     update_add_transaction_signal = QtCore.Signal(str)
     update_stock_list_signal = QtCore.Signal(Stock)
     update_transaction_list_signal = QtCore.Signal(Stock)
+    update_stock_widget_signal = QtCore.Signal(Stock, bool, str)
     update_purchase_values_signal = QtCore.Signal(float, float, float)
     update_sale_values_signal = QtCore.Signal(float, float, float)
     update_profit_values_signal = QtCore.Signal(float, float, float)
@@ -490,7 +491,6 @@ class Control(QtCore.QObject):
         self.update_due_tax_values_signal.emit(self.get_total_due_tax_of_normal_stocks(),\
             self.get_total_due_tax_of_day_trade_stocks(), self.get_total_due_tax_of_fi_stocks(), self.darf_value)
 
-
 # SLOT - Fires when receive an add stock signal from the gui
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot(Stock)
@@ -507,6 +507,27 @@ class Control(QtCore.QObject):
             else:
                 self.update_stock_list_signal.emit(new_stock)
         self.update_add_stock_signal.emit(error_message)
+        self.calculate_darf()
+        self.update_values_on_gui()
+
+# SLOT - Fires when receive an edit stock signal from the gui
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(Stock)
+    def edit_stock_slot(self, new_stock):
+        error_message = ""
+        remove_widget = False
+        if new_stock.name == "":
+            error_message = "Erro! Nome da ação inválido"
+        elif new_stock.ammount == 0:
+            if not self.remove_stock(new_stock.name):
+                error_message = "Erro! Ação não existe!"
+            else:
+                remove_widget = True
+        else:
+            if not self.edit_stock(new_stock.name, new_stock.price, new_stock.category,\
+                new_stock.ammount, new_stock.paid_fares):
+                error_message = "Erro! Ação não existe!"
+        self.update_stock_widget_signal.emit(new_stock, remove_widget, error_message)
         self.calculate_darf()
         self.update_values_on_gui()
 

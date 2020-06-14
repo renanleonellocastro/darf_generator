@@ -9,6 +9,10 @@ from include.stock_ui import Ui_Stock
 
 class StockWidget(QtWidgets.QWidget, Ui_Stock):
 
+# Definition of Qt Signals
+#----------------------------------------------------------------------------------------------------------------------
+    edit_stock_signal = QtCore.Signal(Stock)
+
 # Constructor
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
@@ -18,25 +22,18 @@ class StockWidget(QtWidgets.QWidget, Ui_Stock):
         self.__stock = Stock()
         self.editButton.clicked.connect(self.on_edit_button_clicked)
 
-# Fill the current stock with the values of a given one
+# Send a signal to the control module to update the stock properties
 #----------------------------------------------------------------------------------------------------------------------
-    def set_stock(self, new_stock):
-        self.__stock = copy.deepcopy(new_stock)
-        self.update_widget()
+    def send_signal_to_control_to_update_the_stock(self):
+        category = StockTypes.FI if self.categoryInput.currentIndex() == 0 else StockTypes.NORMAL
+        new_stock = Stock(self.stockLabel.text(),self.valueInput.value(),category,\
+            self.ammountInput.value(),self.faresInput.value())      
+        self.edit_stock_signal.emit(new_stock)
 
-# Update stock values with the values of the graphical elements
+# Update graphical elements of the widget with the updated stock values
 #----------------------------------------------------------------------------------------------------------------------
-    def update_stock(self):
-        self.__stock.name = self.stockLabel.text()
-        self.__stock.price = self.valueInput.value()
-        self.__stock.ammount = self.ammountInput.value()
-        self.__stock.paid_fares = self.faresInput.value()
-        self.__stock.category = StockTypes.FI if self.categoryInput.currentIndex == 0 else StockTypes.NORMAL
-        self.totalValueLabel.setText("%0.2f" %self.__stock.total_price)
-
-# Update graphical elements of the widget with the stock values
-#----------------------------------------------------------------------------------------------------------------------
-    def update_widget(self):
+    def update_stock(self, updated_stock):
+        self.__stock = copy.deepcopy(updated_stock)
         self.stockLabel.setText(self.__stock.name)
         self.valueInput.setValue(self.__stock.price)
         self.ammountInput.setValue(self.__stock.ammount)
@@ -61,4 +58,4 @@ class StockWidget(QtWidgets.QWidget, Ui_Stock):
             self.valueInput.setEnabled(False)
             self.ammountInput.setEnabled(False)
             self.faresInput.setEnabled(False)
-            self.update_stock()
+            self.send_signal_to_control_to_update_the_stock()

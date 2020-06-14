@@ -22,10 +22,12 @@ def execute():
 def connect_qt_signals_and_slots(view, control):
     view.stock_add_screen.add_stock_signal.connect(control.add_stock_slot)
     view.transaction_add_screen.add_transaction_signal.connect(control.add_transaction_slot)
+    view.stock_list_screen.edit_stock_signal.connect(control.edit_stock_slot)
     control.update_add_stock_signal.connect(view.stock_add_screen.update_add_stock_slot)
     control.update_add_transaction_signal.connect(view.transaction_add_screen.update_add_transaction_slot)
     control.update_stock_list_signal.connect(view.stock_list_screen.update_stock_list_slot)
     control.update_transaction_list_signal.connect(view.transaction_list_screen.update_transaction_list_slot)
+    control.update_stock_widget_signal.connect(view.stock_list_screen.update_stock_widget_slot)
     control.update_purchase_values_signal.connect(view.update_purchase_values_slot)
     control.update_sale_values_signal.connect(view.update_sale_values_slot)
     control.update_profit_values_signal.connect(view.update_profit_values_slot)
