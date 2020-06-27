@@ -49,7 +49,6 @@ class StockListScreen(QtWidgets.QWidget, Ui_StockList):
         stock_position_in_list = self.find_stock(old_stock_name)
         if (stock_position_in_list != -1):
             item_to_be_removed = self.stockListLayout.takeAt(stock_position_in_list)
-            #self.stockListLayout.removeItem(item_to_be_removed)
             item_to_be_removed.widget().deleteLater()
             return True
         else:

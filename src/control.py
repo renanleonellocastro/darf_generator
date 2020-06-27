@@ -15,8 +15,9 @@ class Control(QtCore.QObject):
     update_add_stock_signal = QtCore.Signal(str)
     update_add_transaction_signal = QtCore.Signal(str)
     update_stock_list_signal = QtCore.Signal(Stock)
-    update_transaction_list_signal = QtCore.Signal(Stock)
+    update_transaction_list_signal = QtCore.Signal(Transaction)
     update_stock_widget_signal = QtCore.Signal(Stock, bool, str)
+    update_transaction_widget_signal = QtCore.Signal(Transaction, bool, str)
     update_purchase_values_signal = QtCore.Signal(float, float, float)
     update_sale_values_signal = QtCore.Signal(float, float, float)
     update_profit_values_signal = QtCore.Signal(float, float, float)
@@ -549,6 +550,29 @@ class Control(QtCore.QObject):
             else:
                 self.update_transaction_list_signal.emit(new_transaction)
         self.update_add_transaction_signal.emit(error_message)
+        self.calculate_darf()
+        self.update_values_on_gui()
+
+# SLOT - Fires when receive an edit transaction signal from the gui
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(Transaction)
+    def edit_transaction_slot(self, new_transaction):
+        error_message = ""
+        remove_widget = False
+        if new_transaction.name == "":
+            error_message = "Erro! Nome da ação da transação inválido"
+        elif new_transaction.ammount == 0:
+            if not self.remove_transaction(new_transaction.operation_id):
+                error_message = "Erro! Transação não existe!"
+            else:
+                remove_widget = True
+        else:
+            if not self.edit_transaction(new_transaction.operation_id, new_transaction.name, new_transaction.price,\
+                new_transaction.category, new_transaction.ammount, new_transaction.paid_fares,\
+                new_transaction.operation_date.day,new_transaction.operation_date.month,\
+                new_transaction.operation_date.year, new_transaction.operation_type):
+                error_message = "Erro! Transação não existe!"
+        self.update_transaction_widget_signal.emit(new_transaction, remove_widget, error_message)
         self.calculate_darf()
         self.update_values_on_gui()
 #----------------------------------------------------------------------------------------------------------------------

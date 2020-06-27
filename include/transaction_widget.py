@@ -11,6 +11,10 @@ from include.transaction_ui import Ui_Transaction
 
 class TransactionWidget(QtWidgets.QWidget, Ui_Transaction):
 
+# Definition of Qt Signals
+#----------------------------------------------------------------------------------------------------------------------
+    edit_transaction_signal = QtCore.Signal(Transaction)
+
 # Constructor
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self, *args, **kwargs):
@@ -20,30 +24,22 @@ class TransactionWidget(QtWidgets.QWidget, Ui_Transaction):
         self.__transaction = Transaction()
         self.editButton.clicked.connect(self.on_edit_button_clicked)
 
-# Fill the current transaction with the values of a given one
+# Send a signal to the control module to update the transaction properties
 #----------------------------------------------------------------------------------------------------------------------
-    def set_stock(self, new_transaction):
-        self.__transaction = copy.deepcopy(new_transaction)
-        self.update_widget()
-
-# Update transaction values with the values of the graphical elements
-#----------------------------------------------------------------------------------------------------------------------
-    def update_transaction(self):
-        self.__transaction.name = self.transactionLabel.text()
-        self.__transaction.price = self.priceInput.value()
-        self.__transaction.ammount = self.ammountInput.value()
-        self.__transaction.paid_fares = self.faresInput.value()
-        self.__transaction.category = StockTypes.FI if self.categoryInput.currentIndex() == 0 else StockTypes.NORMAL
-        self.__transaction.operation_id = self.idInput.value()
-        self.__transaction.operation_type = TransactionTypes.PURCHASE if self.operationTypeInput.currentIndex() == 0\
+    def send_signal_to_control_to_update_the_transaction(self):
+        category = StockTypes.FI if self.categoryInput.currentIndex() == 0 else StockTypes.NORMAL
+        operation_type = TransactionTypes.PURCHASE if self.operationTypeInput.currentIndex() == 0\
             else TransactionTypes.SALE
-        self.__transaction.set_operation_date(self.operationDateInput.date().year(),\
-            self.operationDateInput.date().month(), self.operationDateInput.date().day())
-        self.totalValueLabel.setText("%0.2f" %self.__transaction.total_price)
+        new_transaction = Transaction(self.transactionLabel.text(),self.priceInput.value(),category,\
+            self.ammountInput.value(),self.faresInput.value(), self.operationDateInput.date().day(),\
+            self.operationDateInput.date().month(), self.operationDateInput.date().year(),\
+            operation_type, self.idInput.value())
+        self.edit_transaction_signal.emit(new_transaction)
 
-# Update graphical elements of the widget with the stock values
+# Update graphical elements of the widget with the updated transaction values
 #----------------------------------------------------------------------------------------------------------------------
-    def update_widget(self):
+    def update_transaction(self, updated_transaction):
+        self.__transaction = copy.deepcopy(updated_transaction)
         self.transactionLabel.setText(self.__transaction.name)
         self.priceInput.setValue(self.__transaction.price)
         self.ammountInput.setValue(self.__transaction.ammount)
@@ -53,7 +49,7 @@ class TransactionWidget(QtWidgets.QWidget, Ui_Transaction):
         self.operationDateInput.setDate(QtCore.QDate(self.__transaction.operation_date.year,\
             self.__transaction.operation_date.month, self.__transaction.operation_date.day))
         self.totalValueLabel.setText("%0.2f" %self.__transaction.total_price)
-
+        
 # SLOT - Process the edit/save button clicked
 #----------------------------------------------------------------------------------------------------------------------  
     def on_edit_button_clicked(self):
@@ -75,4 +71,4 @@ class TransactionWidget(QtWidgets.QWidget, Ui_Transaction):
             self.faresInput.setEnabled(False)
             self.operationTypeInput.setEnabled(False)
             self.operationDateInput.setEnabled(False)
-            self.update_transaction()
+            self.send_signal_to_control_to_update_the_transaction()
