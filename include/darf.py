@@ -8,6 +8,7 @@ import datetime
 from shutil import copy
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
 
 class DarfGenerator:
 
@@ -16,11 +17,10 @@ class DarfGenerator:
     def __init__(self):
         self.__endpoint = "http://www31.receita.fazenda.gov.br/SicalcWeb/UF.asp?AP=P&Person"\
             + "=N&TipTributo=1&FormaPagto=1"
-        copy(os.path.dirname(__file__) + "/../libs/chromedriver", "/tmp/chromedriver")
-        os.chmod("/tmp/chromedriver", 0o775)
+        chrome_driver_path = ChromeDriverManager(log_level=0).install()
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
-        self.__web = webdriver.Chrome(executable_path="/tmp/chromedriver", options=options)
+        self.__web = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
 
 # Find html option in a list of options
 #----------------------------------------------------------------------------------------------------------------------
