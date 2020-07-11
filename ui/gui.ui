@@ -1258,6 +1258,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="darfGenerationButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>

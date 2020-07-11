@@ -1,10 +1,13 @@
 #!/usr/bin/python3
 
 import copy
+import time
 import logging
 from PySide2 import QtCore
+from datetime import datetime
 from include.stock import Stock
 from include.stock import StockTypes
+from include.darf import DarfGenerator
 from include.transaction import Transaction
 from include.transaction import TransactionTypes
 
@@ -23,6 +26,8 @@ class Control(QtCore.QObject):
     update_profit_values_signal = QtCore.Signal(float, float, float)
     update_accumulated_loss_values_signal = QtCore.Signal(float, float, float)
     update_due_tax_values_signal = QtCore.Signal(float, float, float, float)
+    request_captcha_solution_signal = QtCore.Signal(bool)
+    open_darf_file_signal = QtCore.Signal()
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
@@ -31,6 +36,7 @@ class Control(QtCore.QObject):
         self.__stocks = []
         self.__stocks_after_process = []
         self.__transactions = []
+        self.darf_generator = DarfGenerator()
         self.__darf_value = 0.0
         self.__total_purchase = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
         self.__total_sale = {'normal': 0.0, 'day_trade': 0.0, 'fi': 0.0}
@@ -575,4 +581,28 @@ class Control(QtCore.QObject):
         self.update_transaction_widget_signal.emit(new_transaction, remove_widget, error_message)
         self.calculate_darf()
         self.update_values_on_gui()
+
+# SLOT - Fires when receive an start darf generation signal from the gui
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(str,str,str,float)
+    def start_darf_generation_slot(self, cpf, state, city, darf_value):
+        date = datetime(QtCore.QDate.currentDate().year(), QtCore.QDate.currentDate().month(),\
+            QtCore.QDate.currentDate().day())
+        self.darf_generator.start_darf_generation(cpf, state, city, date, darf_value)
+        self.darf_generator.download_captcha()
+        self.request_captcha_solution_signal.emit(False)
+
+# SLOT - Fires when receive an captcha solution signal from the gui
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(str)
+    def captcha_solution_slot(self, captcha_answer):
+        self.darf_generator.solve_captcha(captcha_answer)
+        if (not self.darf_generator.captcha_solved()):
+            time.sleep(2)
+            self.darf_generator.download_captcha()
+            self.request_captcha_solution_signal.emit(True)
+        else:
+            self.darf_generator.save_darf()
+            self.darf_generator.finish_generation()
+            self.open_darf_file_signal.emit()
 #----------------------------------------------------------------------------------------------------------------------

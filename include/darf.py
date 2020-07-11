@@ -6,15 +6,21 @@ import base64
 import logging
 import datetime
 from shutil import copy
+from PySide2 import QtCore
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 
-class DarfGenerator:
+class DarfGenerator(QtCore.QObject):
+
+# Definition of Qt Signals
+#----------------------------------------------------------------------------------------------------------------------
+    update_generation_progress_signal = QtCore.Signal(int)
 
 # Initialize the class with its properties
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self):
+        super().__init__()
         self.__endpoint = "http://www31.receita.fazenda.gov.br/SicalcWeb/UF.asp?AP=P&Person"\
             + "=N&TipTributo=1&FormaPagto=1"
         chrome_driver_path = ChromeDriverManager(log_level=0).install()
@@ -83,6 +89,7 @@ class DarfGenerator:
 #----------------------------------------------------------------------------------------------------------------------
     def __download_captcha(self):
         logging.debug('Downloading the captcha...')
+        captcha_filepath = os.path.dirname(__file__) + "/../downloads/captcha.jpg"
         captcha = self.__web.execute_script("""
             var ele = arguments[0];
             var cnv = document.createElement('canvas');
@@ -90,7 +97,7 @@ class DarfGenerator:
             cnv.getContext('2d').drawImage(ele, 0, 0);
             return cnv.toDataURL('captcha/jpeg').substring(22);    
             """, self.__web.find_element_by_id("img_captcha_serpro_gov_br"))
-        with open(r"../downloads/captcha.jpg", 'wb') as f:
+        with open(captcha_filepath, 'wb') as f:
             f.write(base64.b64decode(captcha))
 
 # Solving the captcha
@@ -113,12 +120,64 @@ class DarfGenerator:
 # Save darf bill
 #----------------------------------------------------------------------------------------------------------------------
     def __save_bill(self, name):
+        darf_filepath = os.path.dirname(__file__) + "/../downloads/%s" %name
         logging.debug('Saving the darf bill...')
         self.__proceed_next_step()
         time.sleep(2)
         self.__web.switch_to.window(window_name=self.__web.window_handles[-1])
         time.sleep(2)
-        self.__web.save_screenshot(os.path.dirname(__file__) + "/../downloads/%s" %name)
+        self.__web.save_screenshot(darf_filepath)
+
+# Start the darf generation using governement system
+#----------------------------------------------------------------------------------------------------------------------
+    def start_darf_generation(self, cpf, state, city, date, value):
+        self.__web.get(self.__endpoint)
+        self.update_generation_progress_signal.emit(10)
+        self.__select_state_and_city(state, city)
+        self.update_generation_progress_signal.emit(20)
+        self.__insert_government_code()
+        self.update_generation_progress_signal.emit(30)
+        self.__insert_period_and_value(date, value)
+        self.update_generation_progress_signal.emit(40)
+        self.__proceed_next_step()
+        self.update_generation_progress_signal.emit(50)
+        self.__fill_cpf(cpf)
+        self.update_generation_progress_signal.emit(60)
+
+# Download captcha form government system
+#----------------------------------------------------------------------------------------------------------------------
+    def download_captcha(self):
+        self.__download_captcha()
+        self.update_generation_progress_signal.emit(70)
+
+# Solve captcha
+#----------------------------------------------------------------------------------------------------------------------
+    def solve_captcha(self, captcha_answer):
+        self.__web.find_element_by_id("txtTexto_captcha_serpro_gov_br").send_keys(captcha_answer)
+        self.__proceed_next_step()
+
+# Check if captcha was solved
+#----------------------------------------------------------------------------------------------------------------------
+    def captcha_solved(self):
+        try:
+           self.__web.find_element_by_id("txtTexto_captcha_serpro_gov_br")
+           return False
+        except:
+           self.update_generation_progress_signal.emit(80)
+           return True
+
+# Save the generated darf
+#----------------------------------------------------------------------------------------------------------------------
+    def save_darf(self):
+        self.__save_bill("darf.png")
+        self.update_generation_progress_signal.emit(90)
+
+# Terminate the darf generation
+#----------------------------------------------------------------------------------------------------------------------
+    def finish_generation(self):
+        self.__web.close()
+        self.__web.quit()
+        self.update_generation_progress_signal.emit(100)
 
 # Generate the darf using governement system
 #----------------------------------------------------------------------------------------------------------------------

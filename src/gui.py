@@ -8,6 +8,7 @@ from include.stock_add_screen import StockAddScreen
 from include.stock_list_screen import StockListScreen
 from include.transaction_add_screen import TransactionAddScreen
 from include.transaction_list_screen import TransactionListScreen
+from include.darf_generation_screen import DarfGenerationScreen
 
 class Gui(QtWidgets.QWidget, Ui_Gui):
 
@@ -19,16 +20,19 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         self.stock_list_screen = StockListScreen(self)
         self.transaction_add_screen = TransactionAddScreen(self)
         self.transaction_list_screen = TransactionListScreen(self)
+        self.darf_generation_screen = DarfGenerationScreen(self)
         self.setupUi(self)
         self.center(self)
         self.addStockButton.clicked.connect(self.on_add_stock_button_clicked)
         self.consultStockButton.clicked.connect(self.on_consult_stocks_button_clicked)
         self.addTransactionButton.clicked.connect(self.on_add_transaction_button_clicked)
         self.consultTransactionButton.clicked.connect(self.on_consult_transactions_button_clicked)
+        self.darfGenerationButton.clicked.connect(self.on_darf_generation_button_clicked)
         self.stock_add_screen.exit_add_stock_signal.connect(self.exit_add_stock)
         self.stock_list_screen.exit_consult_stocks_signal.connect(self.exit_consult_stocks)
         self.transaction_add_screen.exit_add_transaction_signal.connect(self.exit_add_transaction)
         self.transaction_list_screen.exit_consult_transactions_signal.connect(self.exit_consult_transactions)
+        self.darf_generation_screen.exit_darf_generation_signal.connect(self.exit_darf_generation)
 
 # Center the widget in the middle of the display
 #----------------------------------------------------------------------------------------------------------------------
@@ -37,6 +41,15 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         centerPosition = QtWidgets.QDesktopWidget().availableGeometry().center()
         frame.moveCenter(centerPosition)
         screen.move(frame.topLeft())
+
+# Enable or disable the darf generation button and update the darf value in darf generation screen
+#----------------------------------------------------------------------------------------------------------------------
+    def update_darf_generation_info(self, total_darf_value):
+        self.darf_generation_screen.value = total_darf_value
+        if self.darf_generation_screen.value > 10:
+            self.darfGenerationButton.setEnabled(True)
+        else:
+            self.darfGenerationButton.setEnabled(False)
 
 # SLOT - Add stock button clicked
 #----------------------------------------------------------------------------------------------------------------------
@@ -64,6 +77,13 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
     def on_consult_transactions_button_clicked(self):
         self.transaction_list_screen.setGeometry(self.geometry())
         self.transaction_list_screen.show()
+        self.close()
+
+# SLOT - Darf generation button clicked
+#----------------------------------------------------------------------------------------------------------------------
+    def on_darf_generation_button_clicked(self):
+        self.darf_generation_screen.setGeometry(self.geometry())
+        self.darf_generation_screen.show()
         self.close()
 
 # SLOT - Fires when user click in back button on add stock screen
@@ -97,6 +117,14 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         self.setGeometry(self.transaction_list_screen.geometry())
         self.show()
         self.transaction_list_screen.close()
+
+# SLOT - Fires when user click in back button on darf generation screen
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot()
+    def exit_darf_generation(self):
+        self.setGeometry(self.darf_generation_screen.geometry())
+        self.show()
+        self.darf_generation_screen.close()
 
 # SLOT - Fires when receive a signal with the purchase values from the control
 #----------------------------------------------------------------------------------------------------------------------
@@ -138,6 +166,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         self.dayTradeDueTaxLabel.setText("R$ %.2f"%day_trade)
         self.realEstateFundsDueTaxLabel.setText("R$ %.2f"%fi)
         self.darfValueOutputLabel.setText("R$ %.2f"%total_darf)
+        self.update_darf_generation_info(total_darf)
 
 # Runs when the screen in closing
 #----------------------------------------------------------------------------------------------------------------------

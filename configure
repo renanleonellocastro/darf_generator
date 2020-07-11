@@ -7,6 +7,7 @@ pyside2-uic ui/stock_add.ui -o include/stock_add_ui.py
 pyside2-uic ui/transaction_add.ui -o include/transaction_add_ui.py
 pyside2-uic ui/stock_list.ui -o include/stock_list_ui.py
 pyside2-uic ui/transaction_list.ui -o include/transaction_list_ui.py
+pyside2-uic ui/darf_generation.ui -o include/darf_generation_ui.py
 PYTHONPATH=$(pwd)
 
 #https://likegeeks.com/pyqt5-tutorial/

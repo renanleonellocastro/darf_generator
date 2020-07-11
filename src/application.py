@@ -24,6 +24,8 @@ def connect_qt_signals_and_slots(view, control):
     view.transaction_add_screen.add_transaction_signal.connect(control.add_transaction_slot)
     view.stock_list_screen.edit_stock_signal.connect(control.edit_stock_slot)
     view.transaction_list_screen.edit_transaction_signal.connect(control.edit_transaction_slot)
+    view.darf_generation_screen.start_darf_generation_signal.connect(control.start_darf_generation_slot)
+    view.darf_generation_screen.captcha_solution_signal.connect(control.captcha_solution_slot)
     control.update_add_stock_signal.connect(view.stock_add_screen.update_add_stock_slot)
     control.update_add_transaction_signal.connect(view.transaction_add_screen.update_add_transaction_slot)
     control.update_stock_list_signal.connect(view.stock_list_screen.update_stock_list_slot)
@@ -35,6 +37,10 @@ def connect_qt_signals_and_slots(view, control):
     control.update_profit_values_signal.connect(view.update_profit_values_slot)
     control.update_accumulated_loss_values_signal.connect(view.update_accumulated_loss_values_slot)
     control.update_due_tax_values_signal.connect(view.update_due_tax_values_slot)
+    control.request_captcha_solution_signal.connect(view.darf_generation_screen.request_captcha_solution_slot)
+    control.open_darf_file_signal.connect(view.darf_generation_screen.open_darf_file_slot)
+    control.darf_generator.update_generation_progress_signal.connect(\
+        view.darf_generation_screen.update_generation_progress_slot)
 
 # Set log level
 #----------------------------------------------------------------------------------------------------------------------
