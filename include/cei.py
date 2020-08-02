@@ -10,7 +10,6 @@ class Cei():
 #Definition of Class Constants
 #----------------------------------------------------------------------------------------------------------------------
     __login_endpoint = "https://cei.b3.com.br/cei_responsivo/login.aspx"
-    __home_endpoint = "https://cei.b3.com.br/CEI_Responsivo/home.aspx"
     __stocks_extract_endpoint = "https://cei.b3.com.br/CEI_Responsivo/negociacao-de-ativos.aspx"
     __login_data = {"__EVENTTARGET": "", "__EVENTARGUMENT": "", "ctl00$ContentPlaceHolder1$txtLogin": "",
                 "ctl00$ContentPlaceHolder1$txtSenha": "", "__VIEWSTATEGENERATOR": "", "_ASYNCPOST": True,
@@ -76,9 +75,7 @@ class Cei():
         try:
             self.__web.executeGet(self.__stocks_extract_endpoint)
             institutions = self.__web.getOptionsValuesFromSelection('ctl00_ContentPlaceHolder1_ddlAgentes')
-            print (institutions)
             institutions.remove('-1')
-            print ("chegou!")
 
             for institution in institutions:
                 transaction['institution'] = institution
@@ -93,8 +90,8 @@ class Cei():
             return transactions
 
         except:
-            logging.error('failed')
-            raise RuntimeError('failed')
+            logging.error('Failed to get the user extract!')
+            raise RuntimeError('Failed to get the user extract!')
 
 # Get the accounts of an user registered institution
 #----------------------------------------------------------------------------------------------------------------------
@@ -146,25 +143,22 @@ class Cei():
 #----------------------------------------------------------------------------------------------------------------------
     def __read_extract_in_page(self):
         logging.debug('Reading the extract information from transactions page...')
-        return []
+        result = []
+        table_id = "ctl00_ContentPlaceHolder1_rptAgenteBolsa_ctl00_rptContaBolsa_ctl00_pnAtivosNegociados"
+        raw_extract = self.__web.getTextFromEachElementOfTable(table_id)
 
-# [
-#     {
-#         institution: 'Banco Inter',
-#         account: 12345,
-#         stockHistory: [
-#             {
-#                 date: "2019-06-12T03:00:00.000Z",
-#                 operation: "C", // C (Compra) ou V (Venda),
-#                 market: "Mercado a Vista",
-#                 expiration: "",
-#                 code: "BTOW3",
-#                 name: "B2W DIGITAL ON NM",
-#                 quantity: 200,
-#                 price: 32.2,
-#                 totalValue: 6440,
-#                 cotation: 1
-#             }
-#         ]
-#     }
-# ]
+        for item in raw_extract:
+            operation = {}
+            operation['date'] = item[0]
+            operation['operation'] = item[1]
+            operation['market'] = item[2]
+            operation['expiration'] = item[3]
+            operation['code'] = item[4]
+            operation['name'] = item[5]
+            operation['quantity'] = item[6]
+            operation['price'] = item[7]
+            operation['total'] = item[8]
+            operation['cotation'] = item[9]
+            result.append(operation)
+
+        return result
