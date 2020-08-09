@@ -38,7 +38,7 @@ class Control(QtCore.QObject):
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         super().__init__()
-        self.__cei = Cei(True)
+        self.__cei = Cei()
         self.__stocks = []
         self.__stocks_after_process = []
         self.__transactions = []
@@ -659,9 +659,10 @@ class Control(QtCore.QObject):
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot(str,str,str,float)
     def start_darf_generation_slot(self, cpf, state, city, darf_value):
-        current_date = date(QtCore.QDate.currentDate().year(), QtCore.QDate.currentDate().month(),\
+        darf_date = date(QtCore.QDate.currentDate().year(), QtCore.QDate.currentDate().month(),\
             QtCore.QDate.currentDate().day())
-        self.darf_generator.start_darf_generation(cpf, state, city, current_date, darf_value)
+        darf_date = darf_date - relativedelta(months=1)
+        self.darf_generator.start_darf_generation(cpf, state, city, darf_date, darf_value)
         self.darf_generator.download_captcha()
         self.request_captcha_solution_signal.emit(False)
 
