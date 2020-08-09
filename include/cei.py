@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 import logging
 import pyquery
@@ -12,9 +13,11 @@ class Cei():
     __login_endpoint = "https://cei.b3.com.br/cei_responsivo/login.aspx"
     __wallet_endpoint = "https://cei.b3.com.br/CEI_Responsivo/ConsultarCarteiraAtivos.aspx"
     __stocks_extract_endpoint = "https://cei.b3.com.br/CEI_Responsivo/negociacao-de-ativos.aspx"
-    __login_data = {"__EVENTTARGET": "", "__EVENTARGUMENT": "", "ctl00$ContentPlaceHolder1$txtLogin": "",
-                "ctl00$ContentPlaceHolder1$txtSenha": "", "__VIEWSTATEGENERATOR": "", "_ASYNCPOST": True,
-                "__EVENTVALIDATION": "", "__VIEWSTATE": "", "ctl00$ContentPlaceHolder1$btnLogar": "Entrar"}
+    __login_data = {"ctl00$ContentPlaceHolder1$smLoad":\
+                    "ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$btnLogar",
+                    "__EVENTTARGET": "", "__EVENTARGUMENT": "", "ctl00$ContentPlaceHolder1$txtLogin": "",
+                    "ctl00$ContentPlaceHolder1$txtSenha": "", "__VIEWSTATEGENERATOR": "", "_ASYNCPOST": True,
+                    "__EVENTVALIDATION": "", "__VIEWSTATE": "", "ctl00$ContentPlaceHolder1$btnLogar": "Entrar"}
     __wallet_data = {"ctl00$ContentPlaceHolder1$ToolkitScriptManager1":\
                     "ctl00$ContentPlaceHolder1$updFiltro|ctl00$ContentPlaceHolder1$ddlAgentes",
 		            "ctl00_ContentPlaceHolder1_ToolkitScriptManager1_HiddenField": "", "__ASYNCPOST": True,
@@ -183,10 +186,10 @@ class Cei():
             operation['type'] = item[1]
             operation['code'] = item[2]
             operation['fullcode'] = item[3]
-            operation['price'] = item[4]
-            operation['quantity'] = item[5]
-            operation['factor'] = item[6]
-            operation['total'] = item[7]
+            operation['price'] = float(item[4].replace(',','.'))
+            operation['quantity'] = int(item[5])
+            operation['factor'] = float(item[6].replace(',','.'))
+            operation['total'] = float(item[7].replace(',','.'))
             result.append(operation)
 
         return result
@@ -247,16 +250,16 @@ class Cei():
 
         for item in raw_extract:
             operation = {}
-            operation['date'] = item[0]
-            operation['operation'] = item[1]
-            operation['market'] = item[2]
-            operation['expiration'] = item[3]
-            operation['code'] = item[4]
-            operation['name'] = item[5]
-            operation['quantity'] = item[6]
-            operation['price'] = item[7]
-            operation['total'] = item[8]
-            operation['cotation'] = item[9]
+            operation['date'] = item[0].replace('\\n','').replace(' ','')
+            operation['operation'] = item[1].replace('\\n','').replace(' ','')
+            operation['market'] = item[2].replace('\\n','').replace(' ','')
+            operation['expiration'] = item[3].replace('\\n','').replace(' ','')
+            operation['code'] = item[4].replace('\\n','').replace(' ','')
+            operation['name'] = item[5].replace('\\n','').replace(' ','')
+            operation['quantity'] = int(item[6].replace('\\n','').replace(' ',''))
+            operation['price'] = float(item[7].replace('\\n','').replace(' ','').replace(',','.'))
+            operation['total'] = float(item[8].replace('\\n','').replace(' ','').replace(',','.'))
+            operation['cotation'] = float(item[9].replace('\\n','').replace(' ','').replace(',','.'))
             result.append(operation)
 
         return result

@@ -15,6 +15,8 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
     cei_login_signal = QtCore.Signal(str, str)
+    cei_import_stocks_signal = QtCore.Signal()
+    cei_import_transactions_signal = QtCore.Signal()
 
 # Constructor
 #----------------------------------------------------------------------------------------------------------------------
@@ -243,13 +245,26 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
             self.show_cei_error_message(error_message)
             self.timer_cei_login.start()
 
-# SLOT - Fires when receive a signal meaning that the user imported cei stocks or transactions or failed to import
+# SLOT - Fires when receive a signal meaning that the user imported cei stocks or failed to import
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot(str)
-    def update_cei_imports_slot(self, error_message):
+    def update_cei_import_stocks_slot(self, error_message):
         if error_message == "":
             self.hide_cei_progress_bar()
             self.show_cei_import_buttons()
+            self.ceiImportStocksButton.setEnabled(False)
+        else:
+            self.show_cei_error_message(error_message)
+            self.timer_cei_import.start()
+
+# SLOT - Fires when receive a signal meaning that the user imported cei transactions or failed to import
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(str)
+    def update_cei_import_transactions_slot(self, error_message):
+        if error_message == "":
+            self.hide_cei_progress_bar()
+            self.show_cei_import_buttons()
+            self.ceiImportTransactionsButton.setEnabled(False)
         else:
             self.show_cei_error_message(error_message)
             self.timer_cei_import.start()

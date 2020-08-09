@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 import sys
 import logging
@@ -25,6 +26,8 @@ def execute():
 #----------------------------------------------------------------------------------------------------------------------
 def connect_qt_signals_and_slots(view, control):
     view.cei_login_signal.connect(control.cei_login_slot)
+    view.cei_import_stocks_signal.connect(control.cei_import_stocks_slot)
+    view.cei_import_transactions_signal.connect(control.cei_import_transactions_slot)
     view.stock_add_screen.add_stock_signal.connect(control.add_stock_slot)
     view.transaction_add_screen.add_transaction_signal.connect(control.add_transaction_slot)
     view.stock_list_screen.edit_stock_signal.connect(control.edit_stock_slot)
@@ -32,6 +35,8 @@ def connect_qt_signals_and_slots(view, control):
     view.darf_generation_screen.start_darf_generation_signal.connect(control.start_darf_generation_slot)
     view.darf_generation_screen.captcha_solution_signal.connect(control.captcha_solution_slot)
     control.update_cei_login_signal.connect(view.update_cei_login_slot)
+    control.update_cei_import_stocks_signal.connect(view.update_cei_import_stocks_slot)
+    control.update_cei_import_transactions_signal.connect(view.update_cei_import_transactions_slot)
     control.update_add_stock_signal.connect(view.stock_add_screen.update_add_stock_slot)
     control.update_add_transaction_signal.connect(view.transaction_add_screen.update_add_transaction_slot)
     control.update_stock_list_signal.connect(view.stock_list_screen.update_stock_list_slot)
