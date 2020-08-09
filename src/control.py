@@ -4,6 +4,7 @@ import copy
 import time
 import logging
 from PySide2 import QtCore
+from include.cei import Cei
 from datetime import datetime
 from include.stock import Stock
 from include.stock import StockTypes
@@ -15,6 +16,8 @@ class Control(QtCore.QObject):
 
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
+    update_cei_login_signal = QtCore.Signal(str)
+    update_cei_imports_signal = QtCore.Signal(str)
     update_add_stock_signal = QtCore.Signal(str)
     update_add_transaction_signal = QtCore.Signal(str)
     update_stock_list_signal = QtCore.Signal(Stock)
@@ -33,6 +36,7 @@ class Control(QtCore.QObject):
 #----------------------------------------------------------------------------------------------------------------------
     def __init__(self):
         super().__init__()
+        self.__cei = Cei(True)
         self.__stocks = []
         self.__stocks_after_process = []
         self.__transactions = []
@@ -497,6 +501,16 @@ class Control(QtCore.QObject):
             self.__accumulated_loss_after_process['day_trade'], self.__accumulated_loss_after_process['fi'])
         self.update_due_tax_values_signal.emit(self.get_total_due_tax_of_normal_stocks(),\
             self.get_total_due_tax_of_day_trade_stocks(), self.get_total_due_tax_of_fi_stocks(), self.darf_value)
+
+# SLOT - Fires when receive a cei login signal from the gui
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(Stock)
+    def cei_login_slot(self, cpf, password):
+        try:
+            self.__cei.login(cpf, password)
+            self.update_cei_login_signal.emit('')
+        except:
+            self.update_cei_login_signal.emit('Falha ao acessar o CEI')
 
 # SLOT - Fires when receive an add stock signal from the gui
 #----------------------------------------------------------------------------------------------------------------------

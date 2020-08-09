@@ -478,7 +478,7 @@
   </property>
   <layout class="QVBoxLayout" name="guiLayout" stretch="5,2,10,3">
    <item>
-    <widget class="QFrame" name="CeiFrame">
+    <widget class="QFrame" name="ceiFrame">
      <property name="focusPolicy">
       <enum>Qt::NoFocus</enum>
      </property>
@@ -488,7 +488,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="CeiFrameLayout" stretch="3,2,2">
+     <layout class="QVBoxLayout" name="ceiFrameLayout" stretch="3,2,2,2,2,0">
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -496,7 +496,7 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QLabel" name="CeiLabel">
+       <widget class="QLabel" name="ceiLabel">
         <property name="font">
          <font>
           <pointsize>20</pointsize>
@@ -517,14 +517,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="CeiLoginFrame">
+       <widget class="QFrame" name="ceiLoginFrame">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QHBoxLayout" name="CeiLoginFrameLayout">
+        <layout class="QHBoxLayout" name="ceiLoginFrameLayout">
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -538,7 +538,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLineEdit" name="CeiUserInput">
+          <widget class="QLineEdit" name="ceiCpfInput">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -551,18 +551,18 @@
             </font>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::StrongFocus</enum>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
            <property name="placeholderText">
-            <string>Usuário</string>
+            <string>CPF</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="CeiPasswordInput">
+          <widget class="QLineEdit" name="ceiPasswordInput">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -575,7 +575,7 @@
             </font>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::StrongFocus</enum>
            </property>
            <property name="text">
             <string/>
@@ -595,7 +595,67 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="CeiLoginButton">
+       <widget class="QFrame" name="ceiOptionsFrame">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="ceiOptionsFrameLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="ceiImportStocksButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Importar Ações</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ceiImportTransactionsButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Importar Transações</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ceiLoginButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -608,7 +668,58 @@
          </font>
         </property>
         <property name="text">
-         <string>Ativar</string>
+         <string>Entrar</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="ceiProgressBar">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QProgressBar {
+    border: 3px solid grey;
+    border-radius: 8px;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: lightblue;
+    border-radius: 8px;
+    width: 3px;
+    margin: 0.5px;
+}</string>
+        </property>
+        <property name="maximum">
+         <number>0</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="ceiErrorMessage">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: red</string>
+        </property>
+        <property name="text">
+         <string>Mensagem de erro aqui</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -1286,9 +1397,15 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>CeiUserInput</tabstop>
-  <tabstop>CeiPasswordInput</tabstop>
-  <tabstop>CeiLoginButton</tabstop>
+  <tabstop>ceiCpfInput</tabstop>
+  <tabstop>ceiPasswordInput</tabstop>
+  <tabstop>ceiImportStocksButton</tabstop>
+  <tabstop>ceiImportTransactionsButton</tabstop>
+  <tabstop>ceiLoginButton</tabstop>
+  <tabstop>addStockButton</tabstop>
+  <tabstop>consultStockButton</tabstop>
+  <tabstop>addTransactionButton</tabstop>
+  <tabstop>consultTransactionButton</tabstop>
   <tabstop>darfGenerationButton</tabstop>
  </tabstops>
  <resources/>
