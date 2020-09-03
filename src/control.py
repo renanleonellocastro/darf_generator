@@ -17,7 +17,7 @@ class Control(QtCore.QObject):
 
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
-    update_cei_login_signal = QtCore.Signal(str)
+    update_cei_login_signal = QtCore.Signal(list, str)
     update_cei_import_stocks_signal = QtCore.Signal(str)
     update_cei_import_transactions_signal = QtCore.Signal(str)
     update_add_stock_signal = QtCore.Signal(str)
@@ -57,6 +57,7 @@ class Control(QtCore.QObject):
         self.__fi_tax = 0.20
         self.__day_trade_tax = 0.20
         self.__minimum_darf_value = 10.0
+        self.__current_month_date = date.today()
 
 # Add a new stock to the class
 #----------------------------------------------------------------------------------------------------------------------
@@ -178,13 +179,22 @@ class Control(QtCore.QObject):
         logging.debug('Returning the registered transactions...')
         return self.__transactions
 
-# Calculate and return the second business day date of the last month
+# Get the last five months
 #----------------------------------------------------------------------------------------------------------------------
-    def __second_business_day_date_of_last_month(self):
-        logging.debug('Returning the second business day date of last month...')
-        current_date = date.today()
-        return_date = current_date - relativedelta(months=1)
-        return_date = date(return_date.year, return_date.month, 1)
+    def __get_last_five_months(self):
+        logging.debug('Returning the last five months...')
+        last_five_months = []
+        if (date.today().day >= 5):
+            last_five_months.append(date.today() - relativedelta(day=1, months=1))
+        for i in range(2, 6):
+            last_five_months.append(date.today() - relativedelta(day=1, months=i))
+        return last_five_months
+
+# Calculate and return the second business day of the month in parameter
+#----------------------------------------------------------------------------------------------------------------------
+    def __second_business_day_date_of_month(self, month_date):
+        logging.debug('Returning the second business day date of the month...')
+        return_date = month_date
         if ((return_date.weekday() == 4) or (return_date.weekday() == 5)):
             return_date = date(return_date.year, return_date.month, 4)
         elif (return_date.weekday() == 6):
@@ -525,49 +535,48 @@ class Control(QtCore.QObject):
     def cei_login_slot(self, cpf, password):
         try:
             self.__cei.login(cpf, password)
-            self.update_cei_login_signal.emit('')
+            self.update_cei_login_signal.emit(self.__get_last_five_months(), '')
         except:
-            self.update_cei_login_signal.emit('Falha ao acessar o CEI')
+            self.update_cei_login_signal.emit(self.__get_last_five_months(), 'Falha ao acessar o CEI')
 
 # SLOT - Fires when receive a cei import stocks signal from the gui
 #----------------------------------------------------------------------------------------------------------------------
-    @QtCore.Slot()
-    def cei_import_stocks_slot(self):
+    @QtCore.Slot(date)
+    def cei_import_stocks_slot(self, import_date):
         try:
-            report = self.__cei.get_wallet(self.__second_business_day_date_of_last_month())
+            report = self.__cei.get_wallet(self.__second_business_day_date_of_month(import_date))
             for account in report:
                 for stock in account['extract']:
                     category = StockTypes.FI if stock['code'][4:6] == '11' else StockTypes.NORMAL
                     new_stock = Stock(stock['code'][0:4], stock['price'], category, stock['quantity'], 0.0)
                     self.add_stock_slot(new_stock)
+            self.__current_month_date = import_date
             self.update_cei_import_stocks_signal.emit('')
         except:
             self.update_cei_import_stocks_signal.emit('Falha ao importar carteira de ativos do CEI')
 
 # SLOT - Fires when receive a cei import transactions signal from the gui
 #----------------------------------------------------------------------------------------------------------------------
-    @QtCore.Slot()
-    def cei_import_transactions_slot(self):
+    @QtCore.Slot(date)
+    def cei_import_transactions_slot(self, import_date):
         try:
-            if (date.today().day >= 5):
-                date_begin = date.today() - relativedelta(day=1, months=1)
-                date_end = date.today() - relativedelta(day=1, days=1)
-                report = self.__cei.get_extract(date_begin, date_end)
-                oper_id = 1
-                for account in report:
-                    for transaction in account['extract']:
-                        category = StockTypes.FI if transaction['code'][4:6] == '11' else StockTypes.NORMAL
-                        oper = TransactionTypes.PURCHASE if transaction['operation'] == 'C' else TransactionTypes.SALE
-                        day = int(transaction['date'][0:2])
-                        month = int(transaction['date'][3:5])
-                        year = int(transaction['date'][6:10])
-                        new_transaction = Transaction(transaction['code'][0:4], transaction['price'], category,
-                            transaction['quantity'], 0.0, day, month, year, oper, oper_id)
-                        self.add_transaction_slot(new_transaction)
-                        oper_id = oper_id + 1
-                self.update_cei_import_transactions_signal.emit('')
-            else:
-                self.update_cei_import_transactions_signal.emit('Transações só podem ser importadas depois do dia 5')
+            date_begin = import_date
+            date_end = date_begin + relativedelta(months=1) - relativedelta(day=1, days=1)
+            report = self.__cei.get_extract(date_begin, date_end)
+            oper_id = 1
+            for account in report:
+                for transaction in account['extract']:
+                    category = StockTypes.FI if transaction['code'][4:6] == '11' else StockTypes.NORMAL
+                    oper = TransactionTypes.PURCHASE if transaction['operation'] == 'C' else TransactionTypes.SALE
+                    day = int(transaction['date'][0:2])
+                    month = int(transaction['date'][3:5])
+                    year = int(transaction['date'][6:10])
+                    new_transaction = Transaction(transaction['code'][0:4], transaction['price'], category,
+                        transaction['quantity'], 0.0, day, month, year, oper, oper_id)
+                    self.add_transaction_slot(new_transaction)
+                    oper_id = oper_id + 1
+            self.__current_month_date = import_date
+            self.update_cei_import_transactions_signal.emit('')
         except:
             self.update_cei_import_transactions_signal.emit('Falha ao importar transações do CEI')
 
@@ -659,9 +668,7 @@ class Control(QtCore.QObject):
 #----------------------------------------------------------------------------------------------------------------------
     @QtCore.Slot(str,str,str,float)
     def start_darf_generation_slot(self, cpf, state, city, darf_value):
-        darf_date = date(QtCore.QDate.currentDate().year(), QtCore.QDate.currentDate().month(),\
-            QtCore.QDate.currentDate().day())
-        darf_date = darf_date - relativedelta(months=1)
+        darf_date = self.__current_month_date
         self.darf_generator.start_darf_generation(cpf, state, city, darf_date, darf_value)
         self.darf_generator.download_captcha()
         self.request_captcha_solution_signal.emit(False)

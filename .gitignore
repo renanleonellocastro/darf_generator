@@ -4,6 +4,7 @@ src/__pycache__
 include/__pycache__
 include/gui_ui.py
 include/stock_ui.py
+include/automatedweb.py
 include/stock_add_ui.py
 include/stock_list_ui.py
 include/transaction_ui.py

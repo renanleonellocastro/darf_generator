@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import logging
+from datetime import date
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from include.gui_ui import Ui_Gui
@@ -15,8 +16,8 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
     cei_login_signal = QtCore.Signal(str, str)
-    cei_import_stocks_signal = QtCore.Signal()
-    cei_import_transactions_signal = QtCore.Signal()
+    cei_import_stocks_signal = QtCore.Signal(date)
+    cei_import_transactions_signal = QtCore.Signal(date)
 
 # Constructor
 #----------------------------------------------------------------------------------------------------------------------
@@ -62,11 +63,29 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
         frame.moveCenter(centerPosition)
         screen.move(frame.topLeft())
 
+# Convert python date to month name in portuguese and year
+#----------------------------------------------------------------------------------------------------------------------
+    def date_to_month_name_and_year(self, date_to_convert):
+        month_name_list = ['','JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO',
+            'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO']
+        return month_name_list[date_to_convert.month] + '/' + str(date_to_convert.year)
+
+# Convert month name in portuguese and year to python date
+#----------------------------------------------------------------------------------------------------------------------
+    def month_name_and_year_to_date(self, month_and_year_to_convert):
+        month_convert_dict = {'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4, 'MAIO': 5, 'JUNHO': 6, 'JULHO': 7,
+            'AGOSTO': 8, 'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12}
+        day = 1
+        month = month_convert_dict[month_and_year_to_convert.split('/')[0]]
+        year = int(month_and_year_to_convert.split('/')[1])
+        return date(year, month, day)
+
 # Hide the cei import buttons in the screen
 #----------------------------------------------------------------------------------------------------------------------
     def hide_cei_import_buttons(self):
         self.ceiImportStocksButton.hide()
         self.ceiImportTransactionsButton.hide()
+        self.ceiMonthsList.hide()
         self.ceiOptionsFrame.hide()
 
 # Hide the cei progress bar in the screen
@@ -92,6 +111,7 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
     def show_cei_import_buttons(self):
         self.ceiImportStocksButton.show()
         self.ceiImportTransactionsButton.show()
+        self.ceiMonthsList.show()
         self.ceiOptionsFrame.show()
 
 # Show the cei progress bar in the screen
@@ -150,14 +170,14 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
     def on_cei_import_stocks_button_clicked(self):
         self.hide_cei_import_buttons()
         self.show_cei_progress_bar()
-        self.cei_import_stocks_signal.emit()
+        self.cei_import_stocks_signal.emit(self.month_name_and_year_to_date(self.ceiMonthsList.currentText()))
 
 # SLOT - Cei import transactions button clicked
 #----------------------------------------------------------------------------------------------------------------------
     def on_cei_import_transactions_button_clicked(self):
         self.hide_cei_import_buttons()
         self.show_cei_progress_bar()
-        self.cei_import_transactions_signal.emit()
+        self.cei_import_transactions_signal.emit(self.month_name_and_year_to_date(self.ceiMonthsList.currentText()))
 
 # SLOT - Add stock button clicked
 #----------------------------------------------------------------------------------------------------------------------
@@ -236,11 +256,13 @@ class Gui(QtWidgets.QWidget, Ui_Gui):
 
 # SLOT - Fires when receive a signal meaning that the user logged in cei or failed to log in cei
 #----------------------------------------------------------------------------------------------------------------------
-    @QtCore.Slot(str)
-    def update_cei_login_slot(self, error_message):
+    @QtCore.Slot(list, str)
+    def update_cei_login_slot(self, last_five_months, error_message):
         if error_message == "":
             self.hide_cei_progress_bar()
             self.show_cei_import_buttons()
+            for month in last_five_months:
+                self.ceiMonthsList.addItem(self.date_to_month_name_and_year(month))
         else:
             self.show_cei_error_message(error_message)
             self.timer_cei_login.start()
