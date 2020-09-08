@@ -3,10 +3,13 @@
 src/__pycache__
 include/__pycache__
 include/gui_ui.py
+downloads/darf.png
 include/stock_ui.py
+downloads/captcha.jpg
 include/automatedweb.py
 include/stock_add_ui.py
 include/stock_list_ui.py
 include/transaction_ui.py
+include/darf_generation_ui.py
 include/transaction_add_ui.py
 include/transaction_list_ui.py

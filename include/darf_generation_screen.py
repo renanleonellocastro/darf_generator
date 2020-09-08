@@ -13,7 +13,8 @@ class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
 # Definition of Qt Signals
 #----------------------------------------------------------------------------------------------------------------------
     exit_darf_generation_signal = QtCore.Signal()
-    start_darf_generation_signal = QtCore.Signal(str,str,str,float)
+    select_residence_state_signal = QtCore.Signal(str)
+    darf_generate_signal = QtCore.Signal(str,str,float)
     captcha_solution_signal = QtCore.Signal(str)
 
 # Constructor
@@ -23,6 +24,10 @@ class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
         self.setupUi(self)
         self.stateList.lineEdit().setAlignment(QtCore.Qt.AlignCenter)
         self.stateList.lineEdit().setReadOnly(True)
+        self.cityList.lineEdit().setAlignment(QtCore.Qt.AlignCenter)
+        self.cityList.lineEdit().setReadOnly(True)
+        self.cityList.hide()
+        self.cpfInput.hide()
         self.progressBar.setValue(0)
         self.captchaFrame.hide()
         self.progressBar.hide()
@@ -32,7 +37,7 @@ class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
         self.__city = ''
         self.__captch_image_path = os.path.dirname(os.path.abspath(__file__)) + '/../downloads/captcha.jpg'
         self.backButton.clicked.connect(self.on_back_button_clicked)
-        self.cpfButton.clicked.connect(self.on_cpf_button_clicked)
+        self.mainButton.clicked.connect(self.on_main_button_clicked)
         self.captchaButton.clicked.connect(self.on_captcha_button_clicked)
 
 # Get class member "value"
@@ -60,21 +65,34 @@ class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
 #----------------------------------------------------------------------------------------------------------------------  
     def on_back_button_clicked(self):
         self.progressBar.setValue(0)
-        self.cpfFrame.show()
+        self.cpfInput.hide()
+        self.cityList.hide()
         self.progressBar.hide()
+        self.mainFrame.show()
+        self.mainButton.show()
+        self.stateList.show()
         self.exit_darf_generation_signal.emit()
 
-# SLOT - Process the cpf button clicked
+# SLOT - Process the main button clicked
 #----------------------------------------------------------------------------------------------------------------------  
-    def on_cpf_button_clicked(self):
-        self.__cpf = self.cpfInput.text()
-        self.__state = self.stateList.currentText()
-        self.__city = self.cityInput.text()
-        self.backButton.setEnabled(False)
-        self.cpfFrame.hide()
-        self.progressBar.show()
-        self.titleLabel.setText("Gerando a DARF...")
-        self.start_darf_generation_signal.emit(self.__cpf, self.__state, self.__city, self.__value)
+    def on_main_button_clicked(self):
+        if (not self.stateList.isHidden()):
+            self.select_residence_state_signal.emit(self.stateList.currentText())
+            self.mainFrame.hide()
+            self.stateList.hide()
+            self.mainButton.hide()
+            self.progressBar.show()
+        else:
+            self.__cpf = self.cpfInput.text()
+            self.__city = self.cityList.currentText()
+            self.backButton.setEnabled(False)
+            self.mainFrame.hide()
+            self.cpfInput.hide()
+            self.cityList.hide()
+            self.mainButton.hide()
+            self.progressBar.show()
+            self.titleLabel.setText("Gerando a DARF...")
+            self.darf_generate_signal.emit(self.__cpf, self.__city, self.__value)
 
 # SLOT - Process the captcha button clicked
 #----------------------------------------------------------------------------------------------------------------------  
@@ -86,6 +104,18 @@ class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
         self.titleLabel.setText("Gerando boleto...")
         self.errorLabel.setText("")
         self.captcha_solution_signal.emit(solution)
+
+# SLOT - Fill the cities input list
+#----------------------------------------------------------------------------------------------------------------------  
+    @QtCore.Slot(list)
+    def state_cities_slot(self, cities):
+        self.cityList.clear()
+        self.cityList.addItems(cities)
+        self.progressBar.hide()
+        self.mainFrame.show()
+        self.cpfInput.show()
+        self.cityList.show()
+        self.mainButton.show()
 
 # SLOT - Process the request of the control when it wants the captcha to be solved
 #----------------------------------------------------------------------------------------------------------------------  

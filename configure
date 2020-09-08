@@ -6,7 +6,7 @@ echo "Configuring..."
 PYTHONPATH=$(pwd)
 
 #clone automatedweb repo
-git clone https://github.com/renanleonellocastro/automatedweb.git tmp &> /dev/null || exit 1
+git clone https://github.com/renanleonellocastro/automatedweb.git tmp &> /dev/null || return 1
 cp tmp/automatedweb.py include/automatedweb.py
 sleep 1
 rm -rf tmp/

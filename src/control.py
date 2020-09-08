@@ -31,6 +31,7 @@ class Control(QtCore.QObject):
     update_profit_values_signal = QtCore.Signal(float, float, float)
     update_accumulated_loss_values_signal = QtCore.Signal(float, float, float)
     update_due_tax_values_signal = QtCore.Signal(float, float, float, float)
+    state_cities_signal = QtCore.Signal(list)
     request_captcha_solution_signal = QtCore.Signal(bool)
     open_darf_file_signal = QtCore.Signal()
 
@@ -662,14 +663,26 @@ class Control(QtCore.QObject):
                 error_message = "Erro! Transação não existe!"
         self.update_transaction_widget_signal.emit(new_transaction, remove_widget, error_message)
         self.calculate_darf()
-        self.update_values_on_gui()
+        self.update_values_on_gui()      
 
-# SLOT - Fires when receive an start darf generation signal from the gui
+# SLOT - Fires when receive a darf state selection signal from the gui
 #----------------------------------------------------------------------------------------------------------------------
-    @QtCore.Slot(str,str,str,float)
-    def start_darf_generation_slot(self, cpf, state, city, darf_value):
+    @QtCore.Slot(str)
+    def select_residence_state_slot(self, state):
+        self.darf_generator.restart()
+        self.darf_generator.begin_darf_generation()
+        self.darf_generator.select_residence_state(state)
+        cities = self.darf_generator.get_cities()
+        self.state_cities_signal.emit(cities)
+
+# SLOT - Fires when receive a darf generate signal from the gui
+#----------------------------------------------------------------------------------------------------------------------
+    @QtCore.Slot(str,str,float)
+    def darf_generate_slot(self, cpf, city, value):
         darf_date = self.__current_month_date
-        self.darf_generator.start_darf_generation(cpf, state, city, darf_date, darf_value)
+        self.darf_generator.select_residence_city(city)
+        self.darf_generator.insert_darf_period_and_value(darf_date, value)
+        self.darf_generator.insert_darf_cpf(cpf)
         self.darf_generator.download_captcha()
         self.request_captcha_solution_signal.emit(False)
 

@@ -28,6 +28,14 @@ class DarfGenerator(QtCore.QObject):
         options.add_argument('--headless')
         self.__web = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
 
+# Restart the class properties
+#----------------------------------------------------------------------------------------------------------------------
+    def restart(self):
+        chrome_driver_path = ChromeDriverManager(log_level=0).install()
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        self.__web = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
+
 # Find html option in a list of options
 #----------------------------------------------------------------------------------------------------------------------
     def __find_option(self, option):
@@ -38,6 +46,16 @@ class DarfGenerator(QtCore.QObject):
                 possible_option.click()
                 return True
         raise ValueError("Option: %s not found!" %option)
+
+# Return the list of options text
+#----------------------------------------------------------------------------------------------------------------------
+    def __get_options_text(self):
+        logging.debug('Returning the options list...')
+        options_list = []
+        selection = self.__web.find_element_by_tag_name('select')
+        for option in selection.find_elements_by_tag_name('option'):
+            options_list.append(option.text)
+        return options_list
 
 # Proceed to next step clicking in continue button
 #----------------------------------------------------------------------------------------------------------------------
@@ -69,12 +87,17 @@ class DarfGenerator(QtCore.QObject):
         self.__web.find_element_by_name('TxtValRec').send_keys("%.2f" %value)
         self.__proceed_next_step(3)
 
-# Select state and city
+# Select state
 #----------------------------------------------------------------------------------------------------------------------
-    def __select_state_and_city(self, state, city):
-        logging.debug('Selecting state and city...')
+    def __select_state(self, state):
+        logging.debug('Selecting state...')
         self.__find_option(state)
         self.__proceed_next_step()
+
+# Select city
+#----------------------------------------------------------------------------------------------------------------------
+    def __select_city(self, city):
+        logging.debug('Selecting city...')
         self.__find_option(city)
         self.__proceed_next_step()
 
@@ -130,21 +153,46 @@ class DarfGenerator(QtCore.QObject):
 
 # Start the darf generation using governement system
 #----------------------------------------------------------------------------------------------------------------------
-    def start_darf_generation(self, cpf, state, city, date, value):
+    def begin_darf_generation(self):
         self.__web.get(self.__endpoint)
         self.update_generation_progress_signal.emit(10)
-        self.__select_state_and_city(state, city)
+
+# Select the residence state in government system
+#----------------------------------------------------------------------------------------------------------------------
+    def select_residence_state(self, state):
+        self.__select_state(state)
+        self.update_generation_progress_signal.emit(15)
+
+# Get the cities of the selected state
+#----------------------------------------------------------------------------------------------------------------------
+    def get_cities(self):
+        cities = self.__get_options_text()
+        cities.pop(0)
+        return cities
+
+# Select the residence city in government system
+#----------------------------------------------------------------------------------------------------------------------
+    def select_residence_city(self, city):
+        self.__select_city(city)
         self.update_generation_progress_signal.emit(20)
+
+# Insert the darf corresponding period and value in government system
+#----------------------------------------------------------------------------------------------------------------------
+    def insert_darf_period_and_value(self, date, value):
         self.__insert_government_code()
         self.update_generation_progress_signal.emit(30)
         self.__insert_period_and_value(date, value)
         self.update_generation_progress_signal.emit(40)
         self.__proceed_next_step()
         self.update_generation_progress_signal.emit(50)
+
+# Insert the darf corresponding cpf in government system
+#----------------------------------------------------------------------------------------------------------------------
+    def insert_darf_cpf(self, cpf):
         self.__fill_cpf(cpf)
         self.update_generation_progress_signal.emit(60)
 
-# Download captcha form government system
+# Download captcha from government system
 #----------------------------------------------------------------------------------------------------------------------
     def download_captcha(self):
         self.__download_captcha()
@@ -185,8 +233,10 @@ class DarfGenerator(QtCore.QObject):
         logging.debug('Generating the darf for user %s...', cpf)
         #Navigate to the government system
         self.__web.get(self.__endpoint)
-        #Select state and city
-        self.__select_state_and_city("SP - SAO PAULO", "SAO PAULO")
+        #Select state
+        self.__select_state("SP - SAO PAULO")
+        #Select city
+        self.__select_city("SAO PAULO")
         #Insert darf government code
         self.__insert_government_code()
         #time.sleep(5)
