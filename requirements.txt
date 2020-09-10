@@ -1,8 +1,9 @@
-json5==0.8.5
-pyquery==1.4.0
-PySide2==5.15.0
-python-dateutil==2.8.1
-requests==2.22.0
-selenium==3.141.0
-urllib3==1.25.10
-webdriver-manager==3.2.1
+json5>=0.8.5
+pyquery>=1.4.0
+PySide2>=5.15.0
+python-dateutil>=2.8.1
+requests>=2.22.0
+selenium>=3.141.0
+urllib3>=1.25.10
+webdriver-manager>=3.2.1
+automatedweb>=1.0.1

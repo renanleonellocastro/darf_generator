@@ -5,11 +5,8 @@ echo "Configuring..."
 #configure pythonpath
 PYTHONPATH=$(pwd)
 
-#clone automatedweb repo
-git clone https://github.com/renanleonellocastro/automatedweb.git tmp &> /dev/null || return 1
-cp tmp/automatedweb.py include/automatedweb.py
-sleep 1
-rm -rf tmp/
+#download requirements
+pip install -r requirements.txt &> /dev/null || return 1
 
 #generate python files from qt design
 pyside2-uic ui/gui.ui -o include/gui_ui.py
@@ -23,16 +20,8 @@ pyside2-uic ui/darf_generation.ui -o include/darf_generation_ui.py
 
 echo "Configured!"
 
-#https://likegeeks.com/pyqt5-tutorial/
-
 #verificar como calcular preco medio das acoes da mesma companhia
 #https://www.bussoladoinvestidor.com.br/calculo-do-preco-medio-de-acoes/
-
-#verificar como obter os dados do cei ao inves das corretoras
-#tentar varrer dia a dia no mes para pegar o preco medio da acao
-#https://cei.b3.com.br/CEI_Responsivo/
-
-#https://www.learnpyqt.com/blog/pyqt5-vs-pyside2/
 
 #verificar essa calculadora
 #https://www.irpfbolsa.com.br/

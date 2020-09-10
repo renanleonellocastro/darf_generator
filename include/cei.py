@@ -4,7 +4,7 @@
 import logging
 import pyquery
 from datetime import date
-from include.automatedweb import AutomatedWeb
+from automatedweb import AutomatedWeb
 
 class Cei():
 
