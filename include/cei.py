@@ -5,6 +5,7 @@ import logging
 import pyquery
 from datetime import date
 from automatedweb import AutomatedWeb
+from locale import atof, setlocale, LC_NUMERIC
 
 class Cei():
 
@@ -186,10 +187,10 @@ class Cei():
             operation['type'] = item[1]
             operation['code'] = item[2]
             operation['fullcode'] = item[3]
-            operation['price'] = float(item[4].replace(',','.'))
+            operation['price'] = self.__brl_string_to_float(item[4])
             operation['quantity'] = int(item[5])
-            operation['factor'] = float(item[6].replace(',','.'))
-            operation['total'] = float(item[7].replace(',','.'))
+            operation['factor'] = self.__brl_string_to_float(item[6])
+            operation['total'] = self.__brl_string_to_float(item[7])
             result.append(operation)
 
         return result
@@ -257,9 +258,16 @@ class Cei():
             operation['code'] = item[4].replace('\\n','').replace(' ','')
             operation['name'] = item[5].replace('\\n','').replace(' ','')
             operation['quantity'] = int(item[6].replace('\\n','').replace(' ',''))
-            operation['price'] = float(item[7].replace('\\n','').replace(' ','').replace(',','.'))
-            operation['total'] = float(item[8].replace('\\n','').replace(' ','').replace(',','.'))
-            operation['cotation'] = float(item[9].replace('\\n','').replace(' ','').replace(',','.'))
+            operation['price'] = self.__brl_string_to_float(item[7].replace('\\n','').replace(' ',''))
+            operation['total'] = self.__brl_string_to_float(item[8].replace('\\n','').replace(' ',''))
+            operation['cotation'] = self.__brl_string_to_float(item[9].replace('\\n','').replace(' ',''))
             result.append(operation)
 
         return result
+
+# Convert brazilian money string to float
+#----------------------------------------------------------------------------------------------------------------------
+    def __brl_string_to_float(self, brl_string):
+        setlocale(LC_NUMERIC, 'pt_BR.UTF-8')
+        return atof(brl_string)
+#----------------------------------------------------------------------------------------------------------------------
