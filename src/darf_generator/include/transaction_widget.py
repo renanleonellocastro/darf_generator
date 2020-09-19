@@ -3,11 +3,11 @@
 import copy
 from PySide2 import QtCore
 from PySide2 import QtWidgets
-from include.stock import Stock
-from include.stock import StockTypes
-from include.transaction import Transaction
-from include.transaction import TransactionTypes
-from include.transaction_ui import Ui_Transaction
+from darf_generator.include.stock import Stock
+from darf_generator.include.stock import StockTypes
+from darf_generator.include.transaction import Transaction
+from darf_generator.include.transaction import TransactionTypes
+from darf_generator.include.transaction_ui import Ui_Transaction
 
 class TransactionWidget(QtWidgets.QWidget, Ui_Transaction):
 

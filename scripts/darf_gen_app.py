@@ -1,12 +1,11 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 import sys
 import logging
-from src.gui import Gui
+from darf_generator.gui import Gui
 from PySide2 import QtWidgets
 from PySide2 import QtCore
-from src.control import Control
+from darf_generator.control import Control
 
 # Execute the application
 #----------------------------------------------------------------------------------------------------------------------

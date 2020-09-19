@@ -2,7 +2,7 @@
 
 import enum
 import logging
-from include import stock
+from darf_generator.include import stock
 from datetime import date
 
 class TransactionTypes(enum.Enum):

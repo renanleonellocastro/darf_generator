@@ -4,12 +4,12 @@ import logging
 from datetime import date
 from PySide2 import QtCore
 from PySide2 import QtWidgets
-from include.gui_ui import Ui_Gui
-from include.stock_add_screen import StockAddScreen
-from include.stock_list_screen import StockListScreen
-from include.transaction_add_screen import TransactionAddScreen
-from include.transaction_list_screen import TransactionListScreen
-from include.darf_generation_screen import DarfGenerationScreen
+from darf_generator.include.gui_ui import Ui_Gui
+from darf_generator.include.stock_add_screen import StockAddScreen
+from darf_generator.include.stock_list_screen import StockListScreen
+from darf_generator.include.transaction_add_screen import TransactionAddScreen
+from darf_generator.include.transaction_list_screen import TransactionListScreen
+from darf_generator.include.darf_generation_screen import DarfGenerationScreen
 
 class Gui(QtWidgets.QWidget, Ui_Gui):
 

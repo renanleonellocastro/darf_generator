@@ -2,12 +2,12 @@
 
 from PySide2 import QtCore
 from PySide2 import QtWidgets
-from include.stock import Stock
-from include.stock import StockTypes
-from include.transaction import Transaction
-from include.transaction import TransactionTypes
-from include.transaction_widget import TransactionWidget
-from include.transaction_list_ui import Ui_TransactionList
+from darf_generator.include.stock import Stock
+from darf_generator.include.stock import StockTypes
+from darf_generator.include.transaction import Transaction
+from darf_generator.include.transaction import TransactionTypes
+from darf_generator.include.transaction_widget import TransactionWidget
+from darf_generator.include.transaction_list_ui import Ui_TransactionList
 
 class TransactionListScreen(QtWidgets.QWidget, Ui_TransactionList):
 
