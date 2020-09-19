@@ -2,13 +2,21 @@
 
 echo "Configuring..."
 
-# crate virtual env
-if [ -f dev_env ];then
-  rm dev_env
+if [ "$1" != "" ]; then
+    ENV_DIR=$1/dev_env
+    echo "Creating virtualenv in $1"
+else
+    ENV_DIR=dev_env
+    echo "Creating virtualenv in dev_env"
 fi
 
-virtualenv --python python3 dev_env
-source dev_env/bin/activate
+# crate virtual env
+if [ -f $ENV_DIR ];then
+  rm $ENV_DIR
+fi
+
+virtualenv --python python3 $ENV_DIR || return 1
+source $ENV_DIR/bin/activate || return 1
 
 #download requirements
 pip install -r requirements.txt &> /dev/null || return 1
