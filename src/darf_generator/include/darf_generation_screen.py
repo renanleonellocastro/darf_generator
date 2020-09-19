@@ -6,7 +6,7 @@ import subprocess
 from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
-from include.darf_generation_ui import Ui_DarfGeneration
+from darf_generator.include.darf_generation_ui import Ui_DarfGeneration
 
 class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
 

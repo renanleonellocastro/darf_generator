@@ -2,21 +2,28 @@
 
 echo "Configuring..."
 
-#configure pythonpath
-PYTHONPATH=$(pwd)
+# crate virtual env
+if [ -f dev_env ];then
+  rm dev_env
+fi
+
+virtualenv --python python3 dev_env
+source dev_env/bin/activate
 
 #download requirements
 pip install -r requirements.txt &> /dev/null || return 1
 
 #generate python files from qt design
-pyside2-uic ui/gui.ui -o include/gui_ui.py
-pyside2-uic ui/stock.ui -o include/stock_ui.py
-pyside2-uic ui/transaction.ui -o include/transaction_ui.py
-pyside2-uic ui/stock_add.ui -o include/stock_add_ui.py
-pyside2-uic ui/transaction_add.ui -o include/transaction_add_ui.py
-pyside2-uic ui/stock_list.ui -o include/stock_list_ui.py
-pyside2-uic ui/transaction_list.ui -o include/transaction_list_ui.py
-pyside2-uic ui/darf_generation.ui -o include/darf_generation_ui.py
+pyside2-uic ui/gui.ui -o src/darf_generator/include/gui_ui.py
+pyside2-uic ui/stock.ui -o src/darf_generator/include/stock_ui.py
+pyside2-uic ui/transaction.ui -o src/darf_generator/include/transaction_ui.py
+pyside2-uic ui/stock_add.ui -o src/darf_generator/include/stock_add_ui.py
+pyside2-uic ui/transaction_add.ui -o src/darf_generator/include/transaction_add_ui.py
+pyside2-uic ui/stock_list.ui -o src/darf_generator/include/stock_list_ui.py
+pyside2-uic ui/transaction_list.ui -o src/darf_generator/include/transaction_list_ui.py
+pyside2-uic ui/darf_generation.ui -o src/darf_generator/include/darf_generation_ui.py
+
+python setup.py develop
 
 echo "Configured!"
 

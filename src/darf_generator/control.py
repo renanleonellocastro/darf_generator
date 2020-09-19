@@ -4,13 +4,13 @@ import copy
 import time
 import logging
 from PySide2 import QtCore
-from include.cei import Cei
+from darf_generator.include.cei import Cei
 from datetime import date
-from include.stock import Stock
-from include.stock import StockTypes
-from include.darf import DarfGenerator
-from include.transaction import Transaction
-from include.transaction import TransactionTypes
+from darf_generator.include.stock import Stock
+from darf_generator.include.stock import StockTypes
+from darf_generator.include.darf import DarfGenerator
+from darf_generator.include.transaction import Transaction
+from darf_generator.include.transaction import TransactionTypes
 from dateutil.relativedelta import relativedelta
 
 class Control(QtCore.QObject):

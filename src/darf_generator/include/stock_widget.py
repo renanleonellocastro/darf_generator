@@ -3,9 +3,9 @@
 import copy
 from PySide2 import QtCore
 from PySide2 import QtWidgets
-from include.stock import Stock
-from include.stock import StockTypes
-from include.stock_ui import Ui_Stock
+from darf_generator.include.stock import Stock
+from darf_generator.include.stock import StockTypes
+from darf_generator.include.stock_ui import Ui_Stock
 
 class StockWidget(QtWidgets.QWidget, Ui_Stock):
 
