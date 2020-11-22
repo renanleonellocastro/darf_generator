@@ -36,6 +36,16 @@ class DarfGenerator(QtCore.QObject):
         options.add_argument('--headless')
         self.__web = webdriver.Chrome(executable_path=chrome_driver_path, options=options)
 
+# Save page screenshot
+#----------------------------------------------------------------------------------------------------------------------
+    def __save_screenshot(self, path):
+        original_size = self.__web.get_window_size()
+        required_width = self.__web.execute_script('return document.body.parentNode.scrollWidth')
+        required_height = self.__web.execute_script('return document.body.parentNode.scrollHeight')
+        self.__web.set_window_size(required_width, required_height)
+        self.__web.find_element_by_tag_name('body').screenshot(path)
+        self.__web.set_window_size(original_size['width'], original_size['height'])
+
 # Find html option in a list of options
 #----------------------------------------------------------------------------------------------------------------------
     def __find_option(self, option):
@@ -112,7 +122,7 @@ class DarfGenerator(QtCore.QObject):
 #----------------------------------------------------------------------------------------------------------------------
     def __download_captcha(self):
         logging.debug('Downloading the captcha...')
-        captcha_filepath = os.path.dirname(__file__) + "/../downloads/captcha.jpg"
+        captcha_filepath = os.path.dirname(__file__) + "/../../../downloads/captcha.jpg"
         captcha = self.__web.execute_script("""
             var ele = arguments[0];
             var cnv = document.createElement('canvas');
@@ -143,13 +153,13 @@ class DarfGenerator(QtCore.QObject):
 # Save darf bill
 #----------------------------------------------------------------------------------------------------------------------
     def __save_bill(self, name):
-        darf_filepath = os.path.dirname(__file__) + "/../downloads/%s" %name
+        darf_filepath = os.path.dirname(__file__) + "/../../../downloads/%s" %name
         logging.debug('Saving the darf bill...')
         self.__proceed_next_step()
         time.sleep(2)
         self.__web.switch_to.window(window_name=self.__web.window_handles[-1])
         time.sleep(2)
-        self.__web.save_screenshot(darf_filepath)
+        self.__save_screenshot(darf_filepath)
 
 # Start the darf generation using governement system
 #----------------------------------------------------------------------------------------------------------------------

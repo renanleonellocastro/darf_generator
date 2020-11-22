@@ -35,7 +35,7 @@ class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
         self.__cpf = ''
         self.__state = ''
         self.__city = ''
-        self.__captch_image_path = os.path.dirname(os.path.abspath(__file__)) + '/../downloads/captcha.jpg'
+        self.__captch_image_path = os.path.dirname(os.path.abspath(__file__)) + '/../../../downloads/captcha.jpg'
         self.backButton.clicked.connect(self.on_back_button_clicked)
         self.mainButton.clicked.connect(self.on_main_button_clicked)
         self.captchaButton.clicked.connect(self.on_captcha_button_clicked)
@@ -139,7 +139,7 @@ class DarfGenerationScreen(QtWidgets.QWidget, Ui_DarfGeneration):
 #----------------------------------------------------------------------------------------------------------------------  
     @QtCore.Slot()
     def open_darf_file_slot(self):
-        darf_file = os.path.dirname(os.path.abspath(__file__)) + '/../downloads/darf.png'
+        darf_file = os.path.dirname(os.path.abspath(__file__)) + '/../../../downloads/darf.png'
         self.backButton.setEnabled(True)
         self.errorLabel.setStyleSheet("color: green")
         self.errorLabel.setText("DARF gerada com sucesso!")
