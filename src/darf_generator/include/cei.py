@@ -11,9 +11,9 @@ class Cei():
 
 #Definition of Class Constants
 #----------------------------------------------------------------------------------------------------------------------
-    __login_endpoint = "https://cei.b3.com.br/cei_responsivo/login.aspx"
-    __wallet_endpoint = "https://cei.b3.com.br/CEI_Responsivo/ConsultarCarteiraAtivos.aspx"
-    __stocks_extract_endpoint = "https://cei.b3.com.br/CEI_Responsivo/negociacao-de-ativos.aspx"
+    __login_endpoint = "https://ceiapp.b3.com.br/CEI_Responsivo/login.aspx"
+    __wallet_endpoint = "https://ceiapp.b3.com.br/CEI_Responsivo/ConsultarCarteiraAtivos.aspx"
+    __stocks_extract_endpoint = "https://ceiapp.b3.com.br/CEI_Responsivo/negociacao-de-ativos.aspx"
     __login_data = {"ctl00$ContentPlaceHolder1$smLoad":\
                     "ctl00$ContentPlaceHolder1$UpdatePanel1|ctl00$ContentPlaceHolder1$btnLogar",
                     "__EVENTTARGET": "", "__EVENTARGUMENT": "", "ctl00$ContentPlaceHolder1$txtLogin": "",

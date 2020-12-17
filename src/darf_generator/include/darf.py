@@ -39,12 +39,14 @@ class DarfGenerator(QtCore.QObject):
 # Save page screenshot
 #----------------------------------------------------------------------------------------------------------------------
     def __save_screenshot(self, path):
+        logging.debug('Saving the darf screenshot in %s...', path)
         original_size = self.__web.get_window_size()
         required_width = self.__web.execute_script('return document.body.parentNode.scrollWidth')
         required_height = self.__web.execute_script('return document.body.parentNode.scrollHeight')
         self.__web.set_window_size(required_width, required_height)
         self.__web.find_element_by_tag_name('body').screenshot(path)
         self.__web.set_window_size(original_size['width'], original_size['height'])
+        logging.debug('Saved the darf screenshot!')
 
 # Find html option in a list of options
 #----------------------------------------------------------------------------------------------------------------------

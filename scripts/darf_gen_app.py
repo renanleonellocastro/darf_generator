@@ -10,6 +10,7 @@ from darf_generator.control import Control
 # Execute the application
 #----------------------------------------------------------------------------------------------------------------------
 def execute():
+    set_log_level(True)
     app = QtWidgets.QApplication([])
     app.setStyle('Fusion')
     control_thread = QtCore.QThread()
@@ -56,7 +57,7 @@ def connect_qt_signals_and_slots(view, control):
 
 # Set log level
 #----------------------------------------------------------------------------------------------------------------------
-def set_log_level(self, debug):
+def set_log_level(debug):
     if (debug):
         logging.basicConfig(level=1)
         logging.debug('Log debug level activated!')
